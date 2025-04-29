@@ -2,7 +2,9 @@
 #define GAME_H
 
 #include <ArduinoJson.h>
+#include <time.h>
 #include "PointRecord.h"
+#include "GetUTC.h"
 
 #define MAX_POINTS 100
 
@@ -21,6 +23,10 @@ private:
    * The ID of player 2
    */
   const uint8_t p2_id;
+  /**
+   * The time/date the object was created (which represents the start of the game)
+   */
+  const String started_at;
   /**
    * Keeps track of every point played (who served and who won).
    * This is what will be sent to the server when the set is over.
@@ -47,7 +53,8 @@ public:
   Game(const uint8_t set_length, const uint8_t p1_id, const uint8_t p2_id)
   : set_length(set_length),
     p1_id(p1_id),
-    p2_id(p2_id)
+    p2_id(p2_id),
+    started_at(GetUTC())
   {}
 
   void AddPointToP1()
@@ -94,8 +101,9 @@ public:
     doc["p1_id"] = p1_id;
     doc["p2_id"] = p2_id;
     doc["set_length"] = set_length;
+    doc["started_at"] = started_at;
 
-    JsonArray points = doc.createNestedArray("points");
+    JsonArray points = doc.createNestedArray("point_history");
 
     for (uint8_t i = 0; i < point_count; i++)
     {

@@ -5,7 +5,7 @@
  * Listens for P1's button presses and updates the TM1637 scoreboard displays in response
  * until one of the players has won
  */
-void MidGamePhase()
+void MidGamePhase(Game* game)
 {
 
 }
