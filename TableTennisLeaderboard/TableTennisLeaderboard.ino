@@ -2,10 +2,19 @@
 #include "MidGamePhase.h"
 #include "EndGamePhase.h"
 #include "Game.h"
+#include "OLED.h"
+#include "Scoreboards.h"
 
 void setup()
 {
   Serial.begin(115200);
+  initialize_OLED();
+  initialize_rotary_encoder();
+  initialize_scoreboards();
+
+  UpdateScoreboards(5, 6);
+
+  delay(1000000);
 }
 
 void loop()

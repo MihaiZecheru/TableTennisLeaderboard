@@ -47,13 +47,21 @@ private:
   /**
    * 1 for Player1. 2 for Player2.
    */
-  uint8_t player_serving; // Whoever wins the first point will serve first (first point is for serve and won't count for final score)
+  uint8_t player_serving;
 
 public:
-  Game(const uint8_t set_length, const uint8_t p1_id, const uint8_t p2_id)
+  /**
+   * Used to keep track of the game and its history
+   * @param set_length The length of the set that will be played (first to 6, 11, or 21). This is the length of the game (set/game are interchangable)
+   * @param p1_id The database ID of player 1 (starts with 10)
+   * @param p2_id The database ID of player 2 (starts with 10)
+   * @param first_server The number of the player serving first. Either 1 or 2 (representing p1 or p2)
+   */
+  Game(uint8_t set_length, uint8_t p1_id, uint8_t p2_id, uint8_t first_server)
   : set_length(set_length),
     p1_id(p1_id),
     p2_id(p2_id),
+    player_serving(first_server),
     started_at(GetUTC())
   {}
 

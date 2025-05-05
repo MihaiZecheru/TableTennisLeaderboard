@@ -16,7 +16,7 @@ String GetUTC()
     utc_tm->tm_hour,
     utc_tm->tm_min,
     utc_tm->tm_sec
-  );
+);
 
   return String(time_str);
 }
