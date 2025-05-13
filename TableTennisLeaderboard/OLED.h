@@ -59,8 +59,9 @@ void ShowErrorMessage(uint8_t code)
 {
   display.clearDisplay();
   display.setCursor(0, 0);
-  display.print("ERROR");
+  display.print("ERROR:");
   display.setCursor(0, 16);
+  display.print("C");
   display.print(code);
   display.display();
   while (true);
