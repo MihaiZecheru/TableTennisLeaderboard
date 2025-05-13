@@ -3,25 +3,47 @@
 <head>
   <title>Table Tennis</title>
   <link rel="stylesheet" href="/index.css">
+  <link rel="icon" href="/table_tennis_racket.png" type="image/x-icon">
 </head>
 <body>
-  <center><h1>Recent Games</h1></center>
+  <div class="games-list-header">
+    <h1 class="recent-games-h1">Recently Played Games</h1>
+    <h1 class="leaderboard-btn">Leaderboard</h1>
+    <!-- TODO: add filter dropdown for filtering by set length. users can choose 6, 11, or 21 from the dropdown to filter -->
+  </div>
 
-  <ul>
+  <ul class="game-list">
     <% games.forEach((game) => { %>
       <li>
         <div class="game-card">
-          <div class="game-info">
-            <h2>Game #<%= game.id %></h2>
-            <p><strong>Player 1 ID:</strong> <%= game.p1_id %> — <strong>Score:</strong> <%= game.p1_score %></p>
-            <p><strong>Player 2 ID:</strong> <%= game.p2_id %> — <strong>Score:</strong> <%= game.p2_score %></p>
-            <p><strong>Winner:</strong> <%= game.winner_id %></p>
-            <p><strong>Set Length:</strong> <%= game.set_length %></p>
-            <p><strong>Match Length:</strong> <%= game.match_length.toFixed(1) %> seconds</p>
+
+          <div class="game-card-players" onclick="window.location.href='/game/<%= game.id %>'">
+            <% if (game.winner_id === game.p1_id) { %>
+              <h2><u><%= gpn(game.p1_id) %></u> vs <%= gpn(game.p2_id) %></h2>
+            <% } else { %>
+              <h2><%= gpn(game.p1_id) %> vs <u><%= gpn(game.p2_id) %></u></h2>
+            <% } %>
           </div>
-        </div>        
+
+          <div class="game-card-score">
+            <h2 title="First to <%= game.set_length %>">
+              <%= game.p1_score %> - <%= game.p2_score %>
+            </h2>
+          </div>
+
+          <div class="game-card-date">
+            <h2><%= new Date(game.started_at).toLocaleDateString() %></h2>
+          </div>
+          
+        </div>
       </li>
     <% }) %>
   </ul>
+
+  <script defer>
+    document.querySelector('.leaderboard-btn').addEventListener('click', () => {
+      window.location.href = '/leaderboard';
+    });
+  </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import { AddSetToDatabase, GetLast50Games } from './database_functions.js';
+import { AddSetToDatabase, GetLast50Games, GetPlayers } from './database_functions.js';
 import express from 'express';
 
 const PORT = 4010;
@@ -8,12 +8,55 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static('public'));
 
+/**
+ * View game history. All the past games are displayed.
+ * When a player clicks on a game, it will show the game details, like the stats and stuff.
+ */
 app.get('/', async (req, res) => {
   const games = await GetLast50Games();
+  const players = await GetPlayers();
   if (!games) return res.status(500).send('Error fetching games');
-  res.render('recent_games', { games });
+  // gpn stands for "get player name"
+  res.render('recent_games', { games, players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
 });
 
+/**
+ * Player leaderboard. Ranked by win ratio
+ */
+app.get('/leaderboard', async (req, res) => {
+  const players = await GetPlayers();
+  
+  players.sort((a, b) => {
+    const a_wr = a.wins / (a.wins + a.losses);
+    const b_wr = b.wins / (b.wins + b.losses);
+    return b_wr - a_wr;
+  });
+
+  res.render('leaderboard', { players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
+});
+
+/**
+ * Game details. When a player clicks on a game, it will show the game details, like the stats and stuff.
+ */
+app.get('/game/:id', async (req, res) => {
+  const game_id = req.params.id;
+  const players = await GetPlayers();
+  const game = await GetGameById(game_id);
+  if (!game) return res.status(500).send('Error fetching game - probably invalid ID');
+  res.render('game_details', { game, players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
+});
+
+/**
+ * Player details like stats and stuff.
+ */
+app.get('/player/:id', async (req, res) => {
+
+});
+
+/**
+ * The ESP32 will send a POST request to this endpoint with the game data.
+ * The server will then save the game data to the database.
+ */
 app.post('/api/upload-set', async (req, res) => {
   /**
    * Example payload (note player IDs start at 10):
@@ -33,3 +76,5 @@ app.post('/api/upload-set', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });
+
+// TODO: something like if a user is on the game details page, they can click a button to directly compare the stats of the two players that played the game

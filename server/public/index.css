@@ -1,33 +1,99 @@
+:root {
+  --light-gray: #eeeeee;
+  --cool-blue: #3c91e6;
+  --cool-purple: #9370db;
+  --text-dark: #333333;
+}
+
 body {
   font-family: 'Comfortaa';
   font-size: 16px;
-  background-color: #f5f5f5;
+  background-color: var(--bg-gray);
+  margin: 0;
+  padding: 0;
+}
+
+.games-list-header {
+  background-color: var(--cool-blue);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--light-gray);
+  padding: 3rem 1rem;
+}
+
+.game-list {
+  list-style-type: none;
+  padding-left: 0;
+  color: var(--light-gray);
+  margin: 0;
+}
+
+.game-list li:nth-child(even) {
+  background-color: var(--cool-blue);
+}
+
+.game-list li:nth-child(odd) {
+  background-color: var(--cool-purple);
 }
 
 .game-card {
+  padding: 2%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.recent-games-h1 {
+  margin-left: 1rem;
+}
+
+.leaderboard-btn {
+  padding: 15px 25px;
+  border: unset;
+  border-radius: 15px;
+  color: var(--text-dark);
+  z-index: 1;
+  background: var(--light-gray);
+  position: relative;
+  font-weight: 1000;
+  font-size: 17px;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  transition: all 250ms;
+  overflow: hidden;
+  margin-right: 1rem;
+  cursor: pointer;
+ }
+ 
+.leaderboard-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  border-radius: 15px;
+  background-color: var(--text-dark);
+  z-index: -1;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  transition: all 250ms;
+  cursor: pointer;
+}
+
+.leaderboard-btn:hover {
+  color: var(--light-gray);
+}
+
+.leaderboard-btn:hover::before {
   width: 100%;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-left: 5px solid #ff3c38;
-  border-radius: 6px;
-  padding: 16px 24px;
-  margin: 16px 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  font-family: 'Segoe UI', sans-serif;
 }
 
-.game-info h2 {
-  margin-top: 0;
-  font-size: 1.2rem;
-  color: #222;
+.game-card-players {
+  cursor: pointer;
 }
 
-.game-info p {
-  margin: 4px 0;
-  font-size: 0.95rem;
-  color: #444;
-}
-
-.game-info strong {
-  color: #000;
+.game-card-score,
+.game-card-date {
+  cursor: default;
 }
