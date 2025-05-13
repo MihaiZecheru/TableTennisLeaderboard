@@ -66,9 +66,9 @@ private:
   uint8_t calculate_remaining_serves()
   {
     if (set_length == 21)
-      return point_count % 5;
+      return 5 - (point_count % 5);
     else if (set_length == 11)
-      return point_count % 2;
+      return 2 - (point_count % 2);
     else if (set_length == 6)
       return 1; // one serve per player
   }
@@ -166,6 +166,24 @@ public:
     return (p1_score >= set_length || p2_score >= set_length) && abs(p1_score - p2_score) >= 2;
   }
 
+  const Player* GetWinner()
+  {
+    if (!CheckForWin()) return nullptr;
+
+    if (max(p1_score, p2_score) == p1_score) return &this->p1;
+    else return &this->p2;
+  }
+
+  uint8_t GetP1Score()
+  {
+    return this->p1_score;
+  }
+
+  uint8_t GetP2Score()
+  {
+    return this->p2_score;
+  }
+
   /**
    * Write "<current_server>\nto serve <serves_left>" to the OLED.
    */
@@ -189,6 +207,7 @@ public:
     doc["p2_id"] = p2.id;
     doc["set_length"] = set_length;
     doc["started_at"] = started_at;
+    doc["ended_at"] = GetUTC();
 
     JsonArray points = doc.createNestedArray("point_history");
 

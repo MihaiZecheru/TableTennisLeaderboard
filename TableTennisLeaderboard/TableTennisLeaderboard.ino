@@ -4,10 +4,12 @@
 #include "Game.h"
 #include "OLED.h"
 #include "Scoreboards.h"
+#include "ConfigureRTC.h"
 
 void setup()
 {
   Serial.begin(115200);
+  ConfigureRTC();
   initialize_OLED();
   initialize_rotary_encoder();
   initialize_scoreboards();
@@ -26,4 +28,7 @@ void loop()
   // Flashes the scoreboards, resets the game, and sends
   // the game data over wifi to the scoreboard server
   EndGamePhase(game);
+
+  // Clean-up
+  delete game;
 }

@@ -44,15 +44,17 @@ bool PromptRetryOnOLED(int error_code)
 }
 
 /**
- * Write "ERROR" to the OLED
+ * Write "ERROR <code>" to the OLED and then block the ESP32
  */
 void ShowErrorMessage(uint8_t code)
 {
   display.clearDisplay();
   display.setCursor(0, 0);
   display.print("ERROR");
+  display.setCursor(0, 16);
   display.print(code);
   display.display();
+  while (true);
 }
 
 /**
@@ -64,6 +66,7 @@ void ShowSelectSetLengthMessage(uint8_t current_length)
   display.clearDisplay();
   display.setCursor(0, 0);
   display.print("Set length");
+  display.setCursor(0, 16);
   display.print(current_length);
   display.print(" points");
   display.display();
@@ -82,6 +85,7 @@ void ShowSelectPlayerMessage(uint8_t player_num, const Player& currently_selecte
   display.print(player_num);
   display.print(": ");
   display.print(currently_selected_player.id);
+  display.setCursor(0, 16);
   display.print(currently_selected_player.name);
   display.display();
 }
@@ -94,7 +98,7 @@ void ShowServeInfoMessageOLED(const Player& current_server, uint8_t serves_left)
   display.clearDisplay();
   display.setCursor(0, 0);
   display.print(current_server.name);
-  display.setCursor(0, 32);
+  display.setCursor(0, 16);
   display.print("to serve ");
   display.print(serves_left);
   display.display();
@@ -108,11 +112,50 @@ void ShowSelectServerMessage(uint8_t selected_player, const char* p1_name, const
   display.clearDisplay();
   display.setCursor(0, 0);
   display.print("1st server");
+  display.setCursor(0, 16);
   display.print("- ");
   if (selected_player == 1)
     display.print(p1_name);
   else if (selected_player == 2)
     display.print(p2_name);
+  display.display();
+}
+
+/**
+ * Write "Syncing\nResults..." to the OLED.
+ * @param dots The number of trailing elipsis dots (either 0, 1, 2, or 3)
+ */
+void ShowUploadingScoresMessage(uint8_t dots)
+{
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("Syncing");
+  display.setCursor(0, 16);
+  display.print("Results");
+  // For animation
+  if (dots == 1) display.print(".");
+  else if (dots == 2) display.print("..");
+  else if (dots == 3) display.print("...");
+  display.display();
+}
+
+/**
+ * Write "<winning_player_name>\nwon 21-18" to the OLED,
+ * where 21-18 was the score
+ */
+void ShowGameOverMessage(const char* winning_player_name, uint8_t p1_score, uint8_t p2_score)
+{
+  uint8_t _max = max(p1_score, p2_score);
+  uint8_t _min = min(p2_score, p2_score);
+
+  display.display();
+  display.setCursor(0, 0);
+  display.print(winning_player_name);
+  display.setCursor(0, 16);
+  display.print("won ");
+  display.print(_max);
+  display.print("-");
+  display.print(_min);
   display.display();
 }
 

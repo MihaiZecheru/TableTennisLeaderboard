@@ -41,7 +41,7 @@ void SendGameData(String data)
   }
   else
   {
-    Serial.println("\nFailed to connect to WiFi. Cannot send game data.");
+    Serial.println("Failed to connect to WiFi. Cannot send game data.");
   }
 
   WiFi.disconnect(true); // WiFi won't be needed again for 5-30m depending on the length of the next game/set
