@@ -6,7 +6,11 @@
 #include "Secrets.h"
 #include "OLED.h"
 
-void SendGameData(String data)
+/**
+ * Send the game data to the server over wifi via HTTP.
+ * @returns True if scores were successfully uploaded to the server, false if the HTTP request returned an error
+ */
+bool SendGameData(String data)
 {
   Serial.println(F("\nConnecting to wifi for EndGamePhase..."));
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -29,12 +33,9 @@ void SendGameData(String data)
 
     if (response_code != 200)
     {
-      // Ask user if the upload should be tried again
-      bool try_again = PromptRetryOnOLED(response_code);
-      if (try_again)
-      {
-        SendGameData(data);
-      }
+      http.end();
+      WiFi.disconnect(true);
+      return false; // fail
     }
 
     http.end();
@@ -45,6 +46,7 @@ void SendGameData(String data)
   }
 
   WiFi.disconnect(true); // WiFi won't be needed again for 5-30m depending on the length of the next game/set
+  return true; // success
 }
 
 #endif

@@ -33,14 +33,23 @@ void ClearOLED()
 
 /**
  * Alert the user that the POST request to the server failed.
- * Prompt him to try again on the OLED and wait for a button press.
- * One button will return true (meaning Retry), the other will return false (meaning Quit).
- * @returns True if should retry the POST request, false if not.
+ * Tell him that the upload will be attempted again (it will be attempted infinetely until the arduino is turned off)
  */
-bool PromptRetryOnOLED(int error_code)
+bool ShowHttpFailMessage()
 {
-  // TODO: 
-  return false;
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("ERROR");
+  display.setCursor(0, 16);
+  display.print("SYNCING");
+  display.display();
+
+  delay(3000);
+
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("RETRYING...");
+  display.display();
 }
 
 /**

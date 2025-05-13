@@ -28,9 +28,14 @@ void EndGamePhase(Game* game)
     delay(DOT_DELAY);
   }
 
-  // Send game data to server
+  // Send game data to server--keep trying until it's successful, because the game data shouldn't be lost
   String json_payload = game->Serialize();
-  SendGameData(json_payload);
+  while (true)
+  {
+    bool success = SendGameData(json_payload);
+    if (success) break;
+    else ShowHttpFailMessage();
+  }
 
   // Show winner on OLED
   if (game->GetWinner() != nullptr)
@@ -43,6 +48,8 @@ void EndGamePhase(Game* game)
     game->UpdateScoreboards(); // write the numbers back on
     delay(FLASH_DELAY);
   }
+
+  ClearScoreboards();
 }
 
 #endif
