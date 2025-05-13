@@ -5,6 +5,9 @@
 #include <time.h>
 #include "PointRecord.h"
 #include "GetUTC.h"
+#include "Players.h"
+#include "OLED.h"
+#include "Scoreboards.h"
 
 #define MAX_POINTS 100
 
@@ -16,13 +19,13 @@ private:
    */
   const uint8_t set_length;
   /**
-   * The ID of player 1
+   * Player 1
    */
-  const uint8_t p1_id;
+  const Player& p1;
   /**
-   * The ID of player 2
+   * Pplayer 2
    */
-  const uint8_t p2_id;
+  const Player& p2;
   /**
    * The time/date the object was created (which represents the start of the game)
    */
@@ -49,46 +52,109 @@ private:
    */
   uint8_t player_serving;
 
+  /**
+   * @returns p1 or p2 based on the value of player_serving
+   */
+  const Player& get_current_server()
+  {
+    return player_serving == 1 ? p1 : p2;
+  }
+
+  /**
+   * Calculate how many serves the current server has left
+   */
+  uint8_t calculate_remaining_serves()
+  {
+    if (set_length == 21)
+      return point_count % 5;
+    else if (set_length == 11)
+      return point_count % 2;
+    else if (set_length == 6)
+      return 1; // one serve per player
+  }
+
+  /**
+   * Change the server if it's time for a swap;
+   * this is every 5 points for a set of 21,
+   * every 2 points for a set of 11,
+   * and every point for a set of 6
+   */
+  void change_server_if_necessary()
+  {
+    if (set_length == 21 && point_count % 5 == 0)
+      __change_server();
+    else if (set_length == 11 && point_count % 2 == 0)
+      __change_server();
+    else if (set_length == 6) // swap after every point; swap is always necessary
+      __change_server();
+  }
+
+  /**
+   * Actually change the server
+   */
+  void __change_server()
+  {
+    if (player_serving == 1)
+    {
+      player_serving = 2;
+    }
+    else if (player_serving == 2)
+    {
+      player_serving = 1;
+    }
+  }
+
 public:
   /**
    * Used to keep track of the game and its history
    * @param set_length The length of the set that will be played (first to 6, 11, or 21). This is the length of the game (set/game are interchangable)
-   * @param p1_id The database ID of player 1 (starts with 10)
-   * @param p2_id The database ID of player 2 (starts with 10)
+   * @param p1 Player struct representing player #1 in the game
+   * @param p2 Player struct representing player #2 in the game
    * @param first_server The number of the player serving first. Either 1 or 2 (representing p1 or p2)
    */
-  Game(uint8_t set_length, uint8_t p1_id, uint8_t p2_id, uint8_t first_server)
+  Game(uint8_t set_length, const Player& p1, const Player& p2, uint8_t first_server)
   : set_length(set_length),
-    p1_id(p1_id),
-    p2_id(p2_id),
+    p1(p1),
+    p2(p2),
     player_serving(first_server),
     started_at(GetUTC())
   {}
 
+  /**
+   * Increment player 1's score and log the point to point_history.
+   * Change the server if necessary and update the OLED, which is displaying the Server Info Message
+   */
   void AddPointToP1()
   {
-    // if (this->point_count == 0)
-    // {
-    //   this->player_serving = 1;
-    //   return;
-    // }
-
     if (this->p1_score == MAX_POINTS) return;
     this->p1_score++;
     this->point_history[this->point_count++] = {this->player_serving, 1}; // 1 is p1
+    
+    // Will change_server only if it's time to
+    change_server_if_necessary();
+    // Update OLED
+    this->ShowServeInfoMessage();
   }
 
+  /**
+   * Increment player 2's score and log the point to point_history.
+   * Change the server if necessary and update the OLED, which is displaying the Server Info Message
+   */
   void AddPointToP2()
   {
-    // if (this->point_count == 0)
-    // {
-    //   this->player_serving = 2;
-    //   return;
-    // }
-
     if (this->p2_score == MAX_POINTS) return;
     this->p2_score++;
     this->point_history[this->point_count++] = {this->player_serving, 2}; // 2 is p2
+
+    // Will change_server only if it's time to
+    change_server_if_necessary();
+    // Update OLED
+    this->ShowServeInfoMessage();
+  }
+
+  void UpdateScoreboards()
+  {
+    _update_scoreboards(this->p1_score, this->p2_score);
   }
 
   /**
@@ -100,14 +166,27 @@ public:
     return (p1_score >= set_length || p2_score >= set_length) && abs(p1_score - p2_score) >= 2;
   }
 
+  /**
+   * Write "<current_server>\nto serve <serves_left>" to the OLED.
+   */
+  void ShowServeInfoMessage()
+  {
+    const Player& current_server = get_current_server();
+    uint8_t serves_left = calculate_remaining_serves();
+    ShowServeInfoMessageOLED(current_server, serves_left);
+  }
+
+  /**
+   * Serialize the game for sending over wifi to the server
+   */
   String Serialize()
   {
     // Estimate needed size (use ArduinoJson Assistant online if needed)
     const size_t capacity = JSON_OBJECT_SIZE(4) + JSON_ARRAY_SIZE(MAX_POINTS) + MAX_POINTS * JSON_OBJECT_SIZE(2) + 200;
     StaticJsonDocument<capacity> doc;
 
-    doc["p1_id"] = p1_id;
-    doc["p2_id"] = p2_id;
+    doc["p1_id"] = p1.id;
+    doc["p2_id"] = p2.id;
     doc["set_length"] = set_length;
     doc["started_at"] = started_at;
 

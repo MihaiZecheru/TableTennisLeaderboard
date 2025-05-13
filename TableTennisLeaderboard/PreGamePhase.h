@@ -8,6 +8,7 @@
 
 uint8_t SelectSetLength();
 const Player& SelectPlayer(uint8_t player_num, int8_t banned_id = -1);
+uint8_t SelectServer(const char* p1_name, const char* p2_name);
 
 /**
  * P1 first selects the set length (first to 6, 11, or 21) using the dial
@@ -21,22 +22,12 @@ Game* PreGamePhase()
   uint8_t set_length = SelectSetLength(); // 6, 11, or 21
   const Player& p1 = SelectPlayer(1);
   const Player& p2 = SelectPlayer(2, p1.id);
+  uint8_t first_server = SelectServer(p1.name, p2.name);
 
-  // Ask p1 to choose who will serve first
-  ShowChoose1stServerMessage();
-
-  // Wait for response input
-  // P1 will either press the p1 button or the p2 button to select who will serve first
-  // The p1 button is the same one that will add a point to him, and the p2 button is the same that will add a point to his opponent
-  uint8_t first_server;
-  while (true)
-  {
-    // TODO: listen to both button inputs and ret
-
-  }
+  ClearOLED();
 
   // Make game object with given data
-  Game* game = new Game(set_length, p1.id, p2.id, first_server);
+  Game* game = new Game(set_length, p1, p2, first_server);
   return game;
 }
 
@@ -140,9 +131,11 @@ const Player& SelectPlayer(uint8_t player_num, int8_t banned_id)
         index--;
       }
 
-      // No wrap-around
+      // No wrap-around (but also check to make sure the banned ID is not selected)
       if (index < 0) index = 0;
+      if (index == 0 && ALL_SAVED_PLAYERS[0].id == banned_id) index = 1;
       if (index >= SAVED_PLAYER_COUNT) index = SAVED_PLAYER_COUNT - 1;
+      if (index == SAVED_PLAYER_COUNT - 1 && ALL_SAVED_PLAYERS[SAVED_PLAYER_COUNT - 1].id == banned_id) index = SAVED_PLAYER_COUNT - 2;
 
       if (index != prev_index)
       {
@@ -172,6 +165,61 @@ const Player& SelectPlayer(uint8_t player_num, int8_t banned_id)
       delay(200); // Crude debounce
       while (rotary_encoder_btn_pressed()); // wait for release
       return ALL_SAVED_PLAYERS[index];
+    }
+
+    delay(1);
+  }
+}
+
+uint8_t SelectServer(const char* p1_name, const char* p2_name)
+{
+  int8_t player_num = 1; // not uint8_t because it can go to -1 before being clamped
+  int8_t prev_player_num = 1;
+  bool last_clk = rotary_encoder_read_clk();
+
+  ShowSelectServerMessage(player_num, p1_name, p2_name);
+
+  // Loop until player 1 clicks the button on the KY-040 rotary encoder (clicks the dial)
+  while (true)
+  {
+    bool clk_state = rotary_encoder_read_clk();
+
+    // Check for rotation
+    // Detect rising edge of CLK only
+    if (!last_clk && clk_state)
+    {
+      bool clockwise_rotation = rotary_encoder_read_dt() != clk_state;
+      if (clockwise_rotation)
+      {
+        // Clockwise rotation
+        player_num++;
+      }
+      else
+      {
+        // Counter-clockwise rotation
+        player_num--;
+      }
+
+      // No wrap-around
+      if (player_num < 1) player_num = 1;
+      if (player_num > 2) player_num = 2;
+
+      if (player_num != prev_player_num)
+      {
+        ShowSelectServerMessage(player_num, p1_name, p2_name);
+        prev_player_num = player_num;
+      }
+
+      delay(50);
+    }
+
+    last_clk = clk_state;
+
+    if (rotary_encoder_btn_pressed())
+    {
+      delay(200); // Crude debounce
+      while (rotary_encoder_btn_pressed()); // wait for release
+      return player_num;
     }
 
     delay(1);

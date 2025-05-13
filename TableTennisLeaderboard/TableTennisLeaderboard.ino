@@ -11,10 +11,6 @@ void setup()
   initialize_OLED();
   initialize_rotary_encoder();
   initialize_scoreboards();
-
-  UpdateScoreboards(5, 6);
-
-  delay(1000000);
 }
 
 void loop()

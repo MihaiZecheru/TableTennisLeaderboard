@@ -45,7 +45,6 @@ void SendGameData(String data)
   }
 
   WiFi.disconnect(true); // WiFi won't be needed again for 5-30m depending on the length of the next game/set
-  delay(15000); // TODO: remove
 }
 
 #endif

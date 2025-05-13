@@ -19,17 +19,20 @@ TM1637Display p1_scoreboard(CLK_P1, DIO_P1);
 TM1637Display p2_scoreboard(CLK_P2, DIO_P2);
 TM1637Display spectator_scoreboard(CLK_SPEC, DIO_SPEC);
 
-/**
- * Set brightness and clear displays
- */
-void initialize_scoreboards()
-{
-  p1_scoreboard.setBrightness(SCORE_DISPLAY_BRIGHTNESS);
-  p2_scoreboard.setBrightness(SCORE_DISPLAY_BRIGHTNESS);
-  spectator_scoreboard.setBrightness(SCORE_DISPLAY_BRIGHTNESS);
+void ClearScoreboards() {
   p1_scoreboard.clear();
   p2_scoreboard.clear();
   spectator_scoreboard.clear();
+}
+
+/**
+ * Set brightness and clear displays
+ */
+void initialize_scoreboards() {
+  p1_scoreboard.setBrightness(SCORE_DISPLAY_BRIGHTNESS);
+  p2_scoreboard.setBrightness(SCORE_DISPLAY_BRIGHTNESS);
+  spectator_scoreboard.setBrightness(SCORE_DISPLAY_BRIGHTNESS);
+  ClearScoreboards();
 }
 
 /**
@@ -37,8 +40,7 @@ void initialize_scoreboards()
  * All three scoreboards will always look the same.
  * P1 score is first, then P2. Format is "P1:P2"
  */
-void UpdateScoreboards(uint8_t p1_score, uint8_t p2_score)
-{
+void _update_scoreboards(uint8_t p1_score, uint8_t p2_score) {
   // Possible with long deuce (though unlikely)
   if (p1_score > 99) p1_score = 99;
   if (p2_score > 99) p2_score = 99;

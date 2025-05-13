@@ -18,7 +18,7 @@ void initialize_OLED()
   display.setFont();
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
-  display.print("Ping Pong");
+  display.print(" Ping Pong");
   display.display();
 }
 
@@ -46,10 +46,13 @@ bool PromptRetryOnOLED(int error_code)
 /**
  * Write "ERROR" to the OLED
  */
-void ShowErrorMessage()
+void ShowErrorMessage(uint8_t code)
 {
-  // TODO: 
-
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("ERROR");
+  display.print(code);
+  display.display();
 }
 
 /**
@@ -84,21 +87,9 @@ void ShowSelectPlayerMessage(uint8_t player_num, const Player& currently_selecte
 }
 
 /**
- * Write "Choose 1st\nserver" to the OLED.
- */
-void ShowChoose1stServerMessage()
-{
-  display.clearDisplay();
-  display.setCursor(0, 0);
-  display.print("Choose 1st");
-  display.print("server");
-  display.display();
-}
-
-/**
  * Write "<current_server>\nto serve <serves_left>" to the OLED.
  */
-void ShowServeInfoMessage(const Player& current_server, uint8_t serves_left)
+void ShowServeInfoMessageOLED(const Player& current_server, uint8_t serves_left)
 {
   display.clearDisplay();
   display.setCursor(0, 0);
@@ -106,6 +97,22 @@ void ShowServeInfoMessage(const Player& current_server, uint8_t serves_left)
   display.setCursor(0, 32);
   display.print("to serve ");
   display.print(serves_left);
+  display.display();
+}
+
+/**
+ * Write "1st serve: <player_name>" to the OLED.
+ */
+void ShowSelectServerMessage(uint8_t selected_player, const char* p1_name, const char* p2_name)
+{
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("1st server");
+  display.print("- ");
+  if (selected_player == 1)
+    display.print(p1_name);
+  else if (selected_player == 2)
+    display.print(p2_name);
   display.display();
 }
 
