@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-json": "^1.0.0"
+  },
+  "type": "module"
+}
