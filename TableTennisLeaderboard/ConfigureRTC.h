@@ -22,7 +22,7 @@ void ConfigureRTC()
 
   time_t now = time(nullptr);
   unsigned long start = millis();
-  const unsigned long timeout = 10000; // 10 sec timeout
+  const unsigned long timeout = 15000; // 15 sec timeout
 
   while (now < 100000 && millis() - start < timeout)
   {
@@ -33,6 +33,7 @@ void ConfigureRTC()
   if (now < 100000)
   {
     Serial.println("❌ Time sync failed!");
+    ShowErrorMessage(1); // permanently blocking
   }
   else
   {
