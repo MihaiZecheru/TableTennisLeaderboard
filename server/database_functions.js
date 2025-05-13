@@ -25,9 +25,10 @@ export async function AddSetToDatabase(p1_id, p2_id, set_length, point_history, 
     let p1_score = 0;
     let p2_score = 0;
 
-    for (const point of JSON.parse(point_history)) {
-      if (point.winner === 1) p1_score++;
-      else if (point.winner === 2) p2_score++;
+    for (const point of point_history) {
+      if (point.w === 1) p1_score++;
+      else if (point.w === 2) p2_score++;
+      else throw new Error("point_history[i].w should be either 1 or 2");
     }
 
     // Decide winner
@@ -36,6 +37,8 @@ export async function AddSetToDatabase(p1_id, p2_id, set_length, point_history, 
       winner_id = p1_id;
     } else if (p2_score > p1_score) {
       winner_id = p2_id;
+    } else {
+      throw new Error('Scores should not be equal');
     }
 
     // Insert into Games table
@@ -48,7 +51,7 @@ export async function AddSetToDatabase(p1_id, p2_id, set_length, point_history, 
       p1_score,
       p2_score,
       set_length,
-      point_history,
+      JSON.stringify(point_history),
       started_at,
       ended_at
     );
