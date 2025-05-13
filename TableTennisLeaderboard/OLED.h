@@ -132,14 +132,14 @@ void ShowSelectServerMessage(uint8_t selected_player, const char* p1_name, const
 }
 
 /**
- * Write "Syncing\nResults..." to the OLED.
+ * Write "Submitting\nResults..." to the OLED.
  * @param dots The number of trailing elipsis dots (either 0, 1, 2, or 3)
  */
 void ShowUploadingScoresMessage(uint8_t dots)
 {
   display.clearDisplay();
   display.setCursor(0, 0);
-  display.print("Syncing");
+  display.print("Submitting");
   display.setCursor(0, 16);
   display.print("Results");
   // For animation
