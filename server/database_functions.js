@@ -1,12 +1,23 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 
+import Game from './database_types/Game.js';
+import Player from './database_types/Player.js';
+import Point from './database_types/Point.js';
+
+function parse_ph(point_history) {
+  for (let i = 0; i < point_history.length; i++) {
+    point_history[i] = new Point(point_history[i].s, point_history[i].w, i + 1);
+  }
+  return point_history;
+}
+
 const db_promise = open({
   filename: './TableTennis.db',
   driver: sqlite3.Database
 });
 
-export async function AddSetToDatabase(p1_id, p2_id, set_length, started_at, point_history) {
+export async function AddSetToDatabase(p1_id, p2_id, set_length, point_history, started_at, ended_at, ) {
   try {
     const db = await db_promise;
 
@@ -14,7 +25,7 @@ export async function AddSetToDatabase(p1_id, p2_id, set_length, started_at, poi
     let p1_score = 0;
     let p2_score = 0;
 
-    for (const point of point_history) {
+    for (const point of JSON.parse(point_history)) {
       if (point.winner === 1) p1_score++;
       else if (point.winner === 2) p2_score++;
     }
@@ -29,7 +40,7 @@ export async function AddSetToDatabase(p1_id, p2_id, set_length, started_at, poi
 
     // Insert into Games table
     await db.run(
-      `INSERT INTO games (p1_id, p2_id, winner_id, p1_score, p2_score, set_length, point_history, started_at)
+      `INSERT INTO games (p1_id, p2_id, winner_id, p1_score, p2_score, set_length, point_history, started_at, ended_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       p1_id,
       p2_id,
@@ -37,8 +48,9 @@ export async function AddSetToDatabase(p1_id, p2_id, set_length, started_at, poi
       p1_score,
       p2_score,
       set_length,
-      JSON.stringify(point_history),
+      point_history,
       started_at,
+      ended_at
     );
 
     return true;
@@ -46,4 +58,80 @@ export async function AddSetToDatabase(p1_id, p2_id, set_length, started_at, poi
     console.error('Error inserting game:', err.message);
     return false;
   }
+}
+
+export async function GetLast50Games() {
+  try {
+    const db = await db_promise;
+    const games = await db.all(
+      `SELECT * FROM games ORDER BY id DESC LIMIT 50`
+    );
+    return games.map(game => new Game(game.id, game.p1_id, game.p2_id, game.winner_id, game.p1_score, game.p2_score, game.set_length, parse_ph(JSON.parse(game.point_history)), game.started_at, game.ended_at));
+  } catch (err) {
+    console.error('Error fetching last 50 games:', err.message);
+    return null;
+  }
+}
+
+export async function GetGame(id) {
+  try {
+    const db = await db_promise;
+    const game = await db.get(
+      `SELECT * FROM games WHERE id = ?`,
+      id
+    );
+    return new Game(game.id, game.p1_id, game.p2_id, game.winner_id, game.p1_score, game.p2_score, game.set_length, parse_ph(JSON.parse(game.point_history)), game.started_at, game.ended_at);
+  } catch (err) {
+    console.error('Error fetching game:', err.message);
+    return null;
+  }
+}
+
+export async function GetPlayerById(player_id) {
+  try {
+    const db = await db_promise;
+    const player = await db.get(
+      `SELECT * FROM players WHERE id = ?`,
+      player_id
+    );
+    return new Player(player.id, player.name, player.country, player.rank);
+  } catch (err) {
+    console.error('Error fetching player:', err.message);
+    return null;
+  }
+}
+
+export async function GetPlayers() {
+  try {
+    const db = await db_promise;
+    const players = await db.all(
+      `SELECT * FROM players`
+    );
+    return players.map(player => new Player(player.id, player.name, player.country, player.rank));
+  } catch (err) {
+    console.error('Error fetching players:', err.message);
+    return [];
+  }
+}
+
+/**
+ * Leaderboard is calculated by comparing the win ratio of every player
+ * @param {Player[]} players Parsed Player array
+ */
+export async function GetPlayerLeaderboard(players) {
+  players.sort((a, b) => {
+    const a_wr = a.game_win_ratio;
+    const b_wr = b.game_win_ratio;
+
+    if (a_wr > b_wr) return -1;
+    if (a_wr < b_wr) return 1;
+    return 0;
+  });
+
+  return players.map((player, index) => {
+    return {
+      rank: index + 1,
+      player: player
+    };
+  });
 }

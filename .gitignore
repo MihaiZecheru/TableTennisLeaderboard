@@ -1,2 +1,6 @@
+# client
 TableTennisLeaderboard/Secrets.h
+
+# server
 server/TableTennis.db
+server/node_modules

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Tennis</title>
+  <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <center><h1>Recent Games</h1></center>
+
+  <ul>
+    <% games.forEach((game) => { %>
+      <li>
+        <div class="game-card">
+          <div class="game-info">
+            <h2>Game #<%= game.id %></h2>
+            <p><strong>Player 1 ID:</strong> <%= game.p1_id %> — <strong>Score:</strong> <%= game.p1_score %></p>
+            <p><strong>Player 2 ID:</strong> <%= game.p2_id %> — <strong>Score:</strong> <%= game.p2_score %></p>
+            <p><strong>Winner:</strong> <%= game.winner_id %></p>
+            <p><strong>Set Length:</strong> <%= game.set_length %></p>
+            <p><strong>Match Length:</strong> <%= game.match_length.toFixed(1) %> seconds</p>
+          </div>
+        </div>        
+      </li>
+    <% }) %>
+  </ul>
+</body>
+</html>
