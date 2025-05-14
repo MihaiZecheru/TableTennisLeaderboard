@@ -41,14 +41,16 @@ bool ShowHttpFailMessage()
   display.setCursor(0, 0);
   display.print("ERROR");
   display.setCursor(0, 16);
-  display.print("SYNCING");
+  display.print("SUBMITTING");
   display.display();
 
   delay(3000);
 
   display.clearDisplay();
   display.setCursor(0, 0);
-  display.print("RETRYING...");
+  display.print("RETRYING");
+  display.setCursor(0, 16);
+  display.print("UPLOAD...");
   display.display();
 }
 
