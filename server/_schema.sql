@@ -10,6 +10,10 @@ CREATE TABLE IF NOT EXISTS Players (
     longest_loss_streak INTEGER DEFAULT 0,
     longest_game_duration INTEGER DEFAULT 0,
     most_points_in_one_game INTEGER DEFAULT 0,
+    biggest_win_margin INTEGER DEFAULT 0,
+    biggest_loss_margin INTEGER DEFAULT 0,
+    most_points_won_in_a_row INTEGER DEFAULT 0,
+    most_points_lost_in_a_row INTEGER DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now'))
 );
 
