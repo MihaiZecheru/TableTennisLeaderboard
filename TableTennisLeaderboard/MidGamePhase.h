@@ -14,16 +14,6 @@ void MidGamePhase(Game* game)
 {
   game->ShowServeInfoMessage();
 
-  // TODO: remove this -- was for debugging
-  delay(2000);
-  game->AddPointToP1();
-  game->AddPointToP1();
-  game->AddPointToP1();
-
-  game->AddPointToP2();
-  game->AddPointToP2();
-  return;
-
   while (!game->CheckForWin())
   {
     if (P1ButtonPressed())
