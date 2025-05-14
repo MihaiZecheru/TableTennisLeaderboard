@@ -5,7 +5,7 @@
 #include "Scoreboards.h"
 
 // The amount of ms that each flash takes in FlashScoreboard()
-#define FLASH_DELAY 750
+#define FLASH_DELAY 500
 
 // The amount of ms that each dot in the UploadingScoresMessage animation takes
 #define DOT_DELAY 400
@@ -37,12 +37,17 @@ void EndGamePhase(Game* game)
     else ShowHttpFailMessage();
   }
 
+  ShowSubmittedMessage();
+  delay(1000);
+
   // Show winner on OLED
   if (game->GetWinner() != nullptr)
+  {
     ShowGameOverMessage(game->GetWinner()->name, game->GetP1Score(), game->GetP2Score());
-  
+  }
+
   // Flash scoreboards
-  for (uint8_t i = 0; i < 3; i++) {
+  for (uint8_t i = 0; i < 5; i++) {
     ClearScoreboards();
     delay(FLASH_DELAY);
     game->UpdateScoreboards(); // write the numbers back on

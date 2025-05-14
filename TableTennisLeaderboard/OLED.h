@@ -158,7 +158,7 @@ void ShowGameOverMessage(const char* winning_player_name, uint8_t p1_score, uint
   uint8_t _max = max(p1_score, p2_score);
   uint8_t _min = min(p2_score, p2_score);
 
-  display.display();
+  display.clearDisplay();
   display.setCursor(0, 0);
   display.print(winning_player_name);
   display.setCursor(0, 16);
@@ -166,6 +166,14 @@ void ShowGameOverMessage(const char* winning_player_name, uint8_t p1_score, uint
   display.print(_max);
   display.print("-");
   display.print(_min);
+  display.display();
+}
+
+void ShowSubmittedMessage()
+{
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("Submitted.");
   display.display();
 }
 
