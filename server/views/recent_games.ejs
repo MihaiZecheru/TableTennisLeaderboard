@@ -6,18 +6,21 @@
   <link rel="icon" href="/table_tennis_racket.png" type="image/x-icon">
 </head>
 <body>
-  <div class="games-list-header">
-    <h1 class="recent-games-h1">Recently Played Games</h1>
-    <h1 class="leaderboard-btn">Leaderboard</h1>
+  <div class="header">
+    <h1 class="header-h1">Recently Played Games</h1>
+    <div class="redirect-btns-container">
+      <h1 class="redirect-btn redirect-btn-compare-players">Compare Players</h1>
+      <h1 class="redirect-btn redirect-btn-leaderboard">Leaderboard</h1>
+    </div>
     <!-- TODO: add filter dropdown for filtering by set length. users can choose 6, 11, or 21 from the dropdown to filter -->
   </div>
 
   <ul class="game-list">
     <% games.forEach((game) => { %>
       <li>
-        <div class="game-card">
+        <div class="game-card" onclick="window.location.href='/game/<%= game.id %>'">
 
-          <div class="game-card-players" onclick="window.location.href='/game/<%= game.id %>'">
+          <div class="game-card-players">
             <% if (game.winner_id === game.p1_id) { %>
               <h2><u><%= gpn(game.p1_id) %></u> vs <%= gpn(game.p2_id) %></h2>
             <% } else { %>
@@ -41,8 +44,12 @@
   </ul>
 
   <script defer>
-    document.querySelector('.leaderboard-btn').addEventListener('click', () => {
+    document.querySelector('.redirect-btn-leaderboard').addEventListener('click', () => {
       window.location.href = '/leaderboard';
+    });
+
+    document.querySelector('.redirect-btn-compare-players').addEventListener('click', () => {
+      window.location.href = '/compare-players';
     });
   </script>
 </body>
