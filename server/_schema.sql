@@ -36,6 +36,15 @@ CREATE TABLE IF NOT EXISTS Games (
 
 -- Add players to table
 INSERT INTO Players (name) VALUES
+('DELETE'),
+('DELETE'),
+('DELETE'),
+('DELETE'),
+('DELETE'),
+('DELETE'),
+('DELETE'),
+('DELETE'),
+('DELETE'),
 ('Chris'),
 ('Daria'),
 ('Erin'),
