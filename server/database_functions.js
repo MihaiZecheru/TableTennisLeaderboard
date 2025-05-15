@@ -6,9 +6,25 @@ import Player from './database_types/Player.js';
 import Point from './database_types/Point.js';
 
 function parse_ph(point_history) {
+  let p1_score = 0;
+  let p2_score = 0;
+
   for (let i = 0; i < point_history.length; i++) {
-    point_history[i] = new Point(point_history[i].s, point_history[i].w, i + 1);
+    if (point_history[i].w === 1) {
+      p1_score++;
+    } else if (point_history[i].w === 2) {
+      p2_score++;
+    } else {
+      throw new Error("point_history[i].w should be either 1 or 2");
+    }
+
+    if (point_history[i].s !== 1 && point_history[i].s !== 2) {
+      throw new Error("point_history[i].s should be either 1 or 2");
+    }
+
+    point_history[i] = new Point(point_history[i].s, point_history[i].w, i + 1, [p1_score, p2_score]);
   }
+
   return point_history;
 }
 
@@ -76,7 +92,7 @@ export async function GetLast50Games() {
   }
 }
 
-export async function GetGame(id) {
+export async function GetGameByID(id) {
   try {
     const db = await db_promise;
     const game = await db.get(
@@ -90,30 +106,30 @@ export async function GetGame(id) {
   }
 }
 
-export async function GetPlayerById(player_id) {
+export async function GetAllPlayers() {
+  try {
+    const db = await db_promise;
+    const players = await db.all(
+      `SELECT * FROM players`
+    );
+    return players.map(player => new Player(player.id, player.name, player.total_games_played, player.total_wins, player.total_losses, player.points_won, player.points_lost, player.longest_win_streak, player.longest_loss_streak, player.longest_game_duration, player.most_points_in_one_game, player.biggest_win_margin, player.biggest_loss_margin, player.most_points_won_in_a_row, player.most_points_lost_in_a_row, player.created_at));
+  } catch (err) {
+    console.error('Error fetching players:', err.message);
+    return [];
+  }
+}
+
+export async function GetPlayerByID(player_id) {
   try {
     const db = await db_promise;
     const player = await db.get(
       `SELECT * FROM players WHERE id = ?`,
       player_id
     );
-    return new Player(player.id, player.name, player.country, player.rank);
+    return new Player(player.id, player.name, player.total_games_played, player.total_wins, player.total_losses, player.points_won, player.points_lost, player.longest_win_streak, player.longest_loss_streak, player.longest_game_duration, player.most_points_in_one_game, player.biggest_win_margin, player.biggest_loss_margin, player.most_points_won_in_a_row, player.most_points_lost_in_a_row, player.created_at);
   } catch (err) {
     console.error('Error fetching player:', err.message);
     return null;
-  }
-}
-
-export async function GetPlayers() {
-  try {
-    const db = await db_promise;
-    const players = await db.all(
-      `SELECT * FROM players`
-    );
-    return players.map(player => new Player(player.id, player.name, player.country, player.rank));
-  } catch (err) {
-    console.error('Error fetching players:', err.message);
-    return [];
   }
 }
 
@@ -137,4 +153,91 @@ export async function GetPlayerLeaderboard(players) {
       player: player
     };
   });
+}
+
+/**
+ * Given a player ID, return the name of the opponent with whom the given player has played the most games with.
+ * @param {*} player_id The ID of the player to get the stat for
+ * @returns {string} The name of the opponent with whom the player has played the most games with
+ */
+export async function GetMostPlayedWithOpponent(player_id) {
+  try {
+    const db = await db_promise;
+    const opponent = await db.get(
+      `SELECT players.name AS opponent_name, COUNT(*) AS games_played
+       FROM games
+       JOIN players ON players.id = games.p2_id
+       WHERE games.p1_id = ?
+       GROUP BY players.id
+       ORDER BY games_played DESC
+       LIMIT 1`,
+      player_id
+    );
+    return opponent?.opponent_name || null;
+  } catch (err) {
+    console.error('Error fetching opponent with most games played:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Get the amount of games played by two players together
+ * @param {*} player_id_1 The ID of the first player
+ * @param {*} player_id_2 The ID of the second player (the first player's opponent)
+ * @returns The amount of games played by the two players together
+ * @throws Error if the database query fails
+ */
+export async function GetCountOfGamesPlayedTogether(player_id_1, player_id_2) {
+  try {
+    const db = await db_promise;
+    const count = await db.get(
+      `SELECT COUNT(*) AS games_played
+       FROM games
+       WHERE (p1_id = ? AND p2_id = ?) OR (p1_id = ? AND p2_id = ?)`,
+      player_id_1,
+      player_id_2,
+      player_id_2,
+      player_id_1
+    );
+    return count.games_played;
+  } catch (err) {
+    console.error('Error fetching count of games played together:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Format the game duration from seconds to a more readable format (e.g., "5m 30s").
+ * @param duration - The duration of the game in seconds.
+ */
+export function format_game_duration(duration) {
+  const minutes = Math.floor(duration / 60);
+  const seconds = duration % 60;
+  return `${minutes}m ${seconds}s`;
+}
+
+/**
+ * Get the win count of a player against a specific opponent.
+ * @param {number} player_id - The ID of the player.
+ * @param {number} opponent_id - The ID of the opponent.
+ * @returns {number} The win count of the player against the opponent.
+ */
+export async function GetPlayerWinsAgainstOpponent(player_id, opponent_id) {
+  try {
+    const db = await db_promise;
+    const count = await db.get(
+      `SELECT COUNT(*) AS wins
+       FROM games
+       WHERE winner_id = ? AND ((p1_id = ? AND p2_id = ?) OR (p1_id = ? AND p2_id = ?))`,
+      player_id,
+      player_id,
+      opponent_id,
+      opponent_id,
+      player_id
+    );
+    return count.wins;
+  } catch (err) {
+    console.error('Error fetching player wins against opponent:', err.message);
+    return null;
+  }
 }

@@ -1,4 +1,4 @@
-import { AddSetToDatabase, GetLast50Games, GetPlayers } from './database_functions.js';
+import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent } from './database_functions.js';
 import express from 'express';
 
 const PORT = 4010;
@@ -14,7 +14,7 @@ app.use(express.static('public'));
  */
 app.get('/', async (req, res) => {
   const games = await GetLast50Games();
-  const players = await GetPlayers();
+  const players = await GetAllPlayers();
   if (!games) return res.status(500).send('Error fetching games');
   // gpn stands for "get player name"
   res.render('recent_games', { games, players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
@@ -24,7 +24,7 @@ app.get('/', async (req, res) => {
  * Player leaderboard. Ranked by win ratio
  */
 app.get('/leaderboard', async (req, res) => {
-  const players = await GetPlayers();
+  const players = await GetAllPlayers();
   
   players.sort((a, b) => {
     const a_wr = a.wins / (a.wins + a.losses);
@@ -40,17 +40,51 @@ app.get('/leaderboard', async (req, res) => {
  */
 app.get('/game/:id', async (req, res) => {
   const game_id = req.params.id;
-  const players = await GetPlayers();
-  const game = await GetGameById(game_id);
+  const players = await GetAllPlayers();
+  const game = await GetGameByID(game_id);
   if (!game) return res.status(500).send('Error fetching game - probably invalid ID');
-  res.render('game_details', { game, players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
+  res.render('game_details', { game, players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown', gpid: (num) => num === 1 ? game.p1_id : game.p2_id });
 });
 
 /**
  * Player details like stats and stuff.
  */
 app.get('/player/:id', async (req, res) => {
+  const player_id = req.params.id;
+  const player = await GetPlayerByID(player_id);
+  if (!player) return res.status(500).send('Error fetching player - probably invalid ID');
+  res.render('player_details', { player });
+});
 
+/**
+ * Compare two players. Expects two player IDs in the query string.
+ * Example: /compare?p1=10&p2=12
+ * If there are no IDs provided, the page will consist of two dropdowns that will allow the user to select two players to compare.
+ * The page will then show the stats of the two players side by side.
+ */
+app.get('/compare-players', async (req, res) => {
+  const p1_id = req.query.p1;
+  const p2_id = req.query.p2;
+  const players = await GetAllPlayers();
+
+  // If both IDs are provided, show the comparison
+  if (p1_id && p2_id) {
+    const p1 = await GetPlayerByID(p1_id);
+    const p2 = await GetPlayerByID(p2_id);
+    if (!p1 || !p2) return res.status(500).send('Error fetching player - probably invalid ID');
+    const p1_most_played_with_opponent = await GetMostPlayedWithOpponent(p1_id);
+    const p2_most_played_with_opponent = await GetMostPlayedWithOpponent(p2_id);
+    const games_played_together = await GetCountOfGamesPlayedTogether(p1_id, p2_id);
+    const p1_wins_against_p2 = await GetPlayerWinsAgainstOpponent(p1_id, p2_id);
+    const p2_wins_against_p1 = await GetPlayerWinsAgainstOpponent(p2_id, p1_id);
+    const p1_win_ratio_against_p2 = p1_wins_against_p2 / (p1_wins_against_p2 + p2_wins_against_p1);
+    const p2_win_ratio_against_p1 = p2_wins_against_p1 / (p2_wins_against_p1 + p1_wins_against_p2);
+    res.render('compare_players', { p1, p2, p1_most_played_with_opponent, p2_most_played_with_opponent, games_played_together, format_game_duration, p1_wins_against_p2, p2_wins_against_p1, p1_win_ratio_against_p2, p2_win_ratio_against_p1 });
+  }
+  // If no IDs are provided, show the dropdowns
+  else {
+    res.render('compare_players_dropdowns', { players });
+  }
 });
 
 /**
@@ -78,3 +112,5 @@ app.listen(PORT, () => {
 });
 
 // TODO: something like if a user is on the game details page, they can click a button to directly compare the stats of the two players that played the game
+
+// TODO: when a new game is uploaded, make sure to process it and update player stats

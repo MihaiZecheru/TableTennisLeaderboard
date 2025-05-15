@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Tennis</title>
+  <link rel="stylesheet" href="/index.css">
+  <link rel="icon" href="/table_tennis_racket.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="header pos-abs">
+    <h1 class="header-h1">
+      Compare Players
+    </h1>
+    <div class="redirect-btns-container">
+      <h1 class="redirect-btn redirect-btn-compare redirect-btn-blue">Compare Players</h1>
+      <h1 class="redirect-btn redirect-btn-home redirect-btn-blue">Home</h1>
+    </div>
+  </div>
+
+  <main class="two-columns">
+    <div class="p1-col p-col">
+      
+    </div>
+    <div class="p2-col p-col">
+      
+    </div>
+  </main>
+
+  <div class="centered-table-container">
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th><h1><%= p1.name %></th></h1>
+            <th><h1>v</h1></th>
+            <th><h1><%= p2.name %></th></h1>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- <tr>
+            <td></td>
+            <td><h1>Overall Statistics</h1></td>
+            <td></td>
+          </tr> -->
+          <tr>
+            <td><h3><%= p1.game_win_ratio * 100 %>%</h3></td>
+            <td><h3>Win Ratio</td></h2>
+            <td><h3><%= p2.game_win_ratio * 100 %>%</h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.total_wins %></h3></td>
+            <td><h3>Wins</h3></td>
+            <td><h3><%= p2.total_wins %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.total_losses %></h3></td>
+            <td><h3>Losses</h3></td>
+            <td><h3><%= p2.total_losses %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.total_games_played %></h3></td>
+            <td><h3>Games Played</h3></td>
+            <td><h3><%= p2.total_games_played %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.point_win_ratio * 100 %>%</h3></td>
+            <td><h3>Point Win Ratio</h3></td>
+            <td><h3><%= p2.point_win_ratio * 100 %>%</h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.points_won %></h3></td>
+            <td><h3>Points Won</h3></td>
+            <td><h3><%= p2.points_won %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.points_lost %></h3></td>
+            <td><h3>Points Lost</h3></td>
+            <td><h3><%= p2.points_lost %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.total_losses %></h3></td>
+            <td><h3>Losses</h3></td>
+            <td><h3><%= p2.total_losses %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.total_points_played %></h3></td>
+            <td><h3>Points Played</h3></td>
+            <td><h3><%= p2.total_points_played %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.longest_loss_streak %></h3></td>
+            <td><h3>Longest Loss Streak</h3></td>
+            <td><h3><%= p2.longest_loss_streak %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= format_game_duration(p1.longest_game_duration) %></h3></td>
+            <td><h3>Longest Match Time</h3></td>
+            <td><h3><%= format_game_duration(p2.longest_game_duration) %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.most_points_in_one_game %></h3></td>
+            <td><h3>Most Points in a Game</h3></td>
+            <td><h3><%= p2.most_points_in_one_game %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.biggest_win_margin %></h3></td>
+            <td><h3>Greatest Win Margin</h3></td>
+            <td><h3><%= p2.biggest_win_margin %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.biggest_loss_margin %></h3></td>
+            <td><h3>Worst Loss Margin</h3></td>
+            <td><h3><%= p2.biggest_loss_margin %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.most_points_won_in_a_row %></h3></td>
+            <td><h3>Most Consecutive Points Won</h3></td>
+            <td><h3><%= p2.most_points_won_in_a_row %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.most_points_lost_in_a_row %></h3></td>
+            <td><h3>Most Consecutive Points Lost</h3></td>
+            <td><h3><%= p2.most_points_lost_in_a_row %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1_most_played_with_opponent %></h3></td>
+            <td><h3>Most Played With Opponent</h3></td>
+            <td><h3><%= p2_most_played_with_opponent %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.most_points_lost_in_a_row %></h3></td>
+            <td><h3>Most Consecutive Points Lost</h3></td>
+            <td><h3><%= p2.most_points_lost_in_a_row %></h3></td>
+          </tr>
+          <tr>
+            <td><h3>-</h3></td>
+            <td><h3>Stats From Games Played Against Each Other Are Displayed Below</h3></td>
+            <td><h3>-</h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= games_played_together %></h3></td>
+            <td><h3>Games Played Together</h3></td>
+            <td><h3><%= games_played_together %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1_win_ratio_against_p2 * 100 %>%</h3></td>
+            <td><h3>Win Ratio Against Each Other</h3></td>
+            <td><h3><%= p2_win_ratio_against_p1 * 100 %>%</h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1_wins_against_p2 %></h3></td>
+            <td><h3>Wins Against Each Other</h3></td>
+            <td><h3><%= p2_wins_against_p1 %></h3></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script defer>
+    document.querySelector('.redirect-btn-compare').addEventListener('click', () => {
+      window.location.href = '/compare-players';
+    });
+
+    document.querySelector('.redirect-btn-home').addEventListener('click', () => {
+      window.location.href = '/';
+    });
+  </script>
+
+</body>
+</html>

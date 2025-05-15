@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Tennis</title>
+  <link rel="stylesheet" href="/index.css">
+  <link rel="icon" href="/table_tennis_racket.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="header pos-abs">
+    <h1 class="header-h1">
+      Compare Players
+    </h1>
+    <div class="redirect-btns-container">
+      <h1 class="redirect-btn redirect-btn-leaderboard redirect-btn-blue">Leaderboard</h1>
+      <h1 class="redirect-btn redirect-btn-home redirect-btn-blue">Home</h1>
+    </div>
+  </div>
+
+  <main class="two-columns">
+    <div class="p1-col p-col">
+      <div class="dropdown">
+        <input type="text" id="p1-dropdown-input" placeholder="Select Player" autocomplete="off" />
+        <ul id="p1-dropdown-list" class="dropdown-list">
+          <% for (let i = 0; i < players.length; i++) { %>
+            <li><%= players[i].name %></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+    <div class="p2-col p-col">
+      <div class="dropdown">
+        <input type="text" id="p2-dropdown-input" placeholder="Select Player" autocomplete="off" />
+        <ul id="p2-dropdown-list" class="dropdown-list">
+          <% for (let i = 0; i < players.length; i++) { %>
+            <li><%= players[i].name %></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <div class="middle-button-container">
+    <h1 class="redirect-btn redirect-btn-compare-selected-players" style="margin-right: 0;">Compare</h>
+  </div>
+
+  <script defer>
+    document.querySelector('.redirect-btn-leaderboard').addEventListener('click', () => {
+      window.location.href = '/leaderboard';
+    });
+
+    document.querySelector('.redirect-btn-home').addEventListener('click', () => {
+      window.location.href = '/';
+    });
+  </script>
+
+  <script defer>
+    const input_p1 = document.getElementById('p1-dropdown-input');
+    const list_p1 = document.getElementById('p1-dropdown-list');
+    const items_p1 = Array.from(list_p1.getElementsByTagName('li'));
+
+    input_p1.addEventListener('focus', () => list_p1.style.display = 'block');
+    input_p1.addEventListener('input', () => {
+      const filter = input_p1.value.toLowerCase();
+      items_p1.forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(filter) ? 'block' : 'none';
+      });
+    });
+
+    items_p1.forEach(item => {
+      item.addEventListener('click', () => {
+        input_p1.value = item.textContent;
+        list_p1.style.display = 'none';
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown')) {
+        list_p1.style.display = 'none';
+      }
+    });
+  </script>
+
+  <script defer>
+    const input_p2 = document.getElementById('p2-dropdown-input');
+    const list_p2 = document.getElementById('p2-dropdown-list');
+    const items_p2 = Array.from(list_p2.getElementsByTagName('li'));
+
+    input_p2.addEventListener('focus', () => list_p2.style.display = 'block');
+    input_p2.addEventListener('input', () => {
+      const filter = input_p2.value.toLowerCase();
+      items_p2.forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(filter) ? 'block' : 'none';
+      });
+    });
+
+    items_p2.forEach(item => {
+      item.addEventListener('click', () => {
+        input_p2.value = item.textContent;
+        list_p2.style.display = 'none';
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown')) {
+        list_p2.style.display = 'none';
+      }
+    });
+  </script>
+
+  <script defer>
+    document.querySelector('.redirect-btn-compare-selected-players').addEventListener('click', () => {
+      const _players = <%- JSON.stringify(players) %>; // Not an error
+      const player1_name = input_p1.value;
+      const player2_name = input_p2.value;
+
+      if (!player1_name || !player2_name) return;
+
+      if (player1_name === player2_name) {
+        alert("Please select two different players.");
+        return;
+      }
+
+      if (!_players.find(p => p.name === player1_name)) {
+        alert("Player 1 not found.");
+        return;
+      }
+      if (!_players.find(p => p.name === player2_name)) {
+        alert("Player 2 not found.");
+        return;
+      }
+
+      const player1_id = _players.find(p => p.name === player1_name).id;
+      const player2_id = _players.find(p => p.name === player2_name).id;
+      window.location.href = `/compare-players/?p1=${player1_id}&p2=${player2_id}`;
+    });
+  </script>
+
+</body>
+</html>
