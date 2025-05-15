@@ -45,112 +45,107 @@
           </tr> -->
           <tr>
             <td><h3><%= p1.game_win_ratio * 100 %>%</h3></td>
-            <td><h3>Win Ratio</td></h2>
+            <td title="Overall win ratio against all opponents"><h3>Win Ratio</td></h2>
             <td><h3><%= p2.game_win_ratio * 100 %>%</h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.total_wins %></h3></td>
-            <td><h3>Wins</h3></td>
+            <td title="Total wins against all opponents"><h3>Wins</h3></td>
             <td><h3><%= p2.total_wins %></h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.total_losses %></h3></td>
-            <td><h3>Losses</h3></td>
+            <td title="Total losses against all opponents"><h3>Losses</h3></td>
             <td><h3><%= p2.total_losses %></h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.total_games_played %></h3></td>
-            <td><h3>Games Played</h3></td>
+            <td title="Total games played against all opponents"><h3>Games Played</h3></td>
             <td><h3><%= p2.total_games_played %></h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.point_win_ratio * 100 %>%</h3></td>
-            <td><h3>Point Win Ratio</h3></td>
+            <td title="Overall ratio of points won v. lost against all opponents"><h3>Point Win Ratio</h3></td>
             <td><h3><%= p2.point_win_ratio * 100 %>%</h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.points_won %></h3></td>
-            <td><h3>Points Won</h3></td>
+            <td title="Total points won against all opponents"><h3>Points Won</h3></td>
             <td><h3><%= p2.points_won %></h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.points_lost %></h3></td>
-            <td><h3>Points Lost</h3></td>
+            <td title="Total points lost against all opponents"><h3>Points Lost</h3></td>
             <td><h3><%= p2.points_lost %></h3></td>
           </tr>
           <tr>
-            <td><h3><%= p1.total_losses %></h3></td>
-            <td><h3>Losses</h3></td>
-            <td><h3><%= p2.total_losses %></h3></td>
-          </tr>
-          <tr>
             <td><h3><%= p1.total_points_played %></h3></td>
-            <td><h3>Points Played</h3></td>
+            <td title="Total points played against all opponents"><h3>Points Played</h3></td>
             <td><h3><%= p2.total_points_played %></h3></td>
           </tr>
           <tr>
+            <tr>
+            <td><h3><%= p1.longest_win_streak %></h3></td>
+            <td title="Most games won in a row (across all opponents)"><h3>Longest Win Streak</h3></td>
+            <td><h3><%= p2.longest_win_streak %></h3></td>
+          </tr>
             <td><h3><%= p1.longest_loss_streak %></h3></td>
-            <td><h3>Longest Loss Streak</h3></td>
+            <td title="Most games lost in a row (across all opponents)"><h3>Longest Loss Streak</h3></td>
             <td><h3><%= p2.longest_loss_streak %></h3></td>
           </tr>
           <tr>
             <td><h3><%= format_game_duration(p1.longest_game_duration) %></h3></td>
-            <td><h3>Longest Match Time</h3></td>
+            <td title="Longest match played in terms of time (against any opponent)"><h3>Longest Match</h3></td>
             <td><h3><%= format_game_duration(p2.longest_game_duration) %></h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.most_points_in_one_game %></h3></td>
-            <td><h3>Most Points in a Game</h3></td>
+            <td title="Longest match played in terms of points (against any opponent)"><h3>Most Points in a Game</h3></td>
             <td><h3><%= p2.most_points_in_one_game %></h3></td>
           </tr>
           <tr>
-            <td><h3><%= p1.biggest_win_margin %></h3></td>
-            <td><h3>Greatest Win Margin</h3></td>
-            <td><h3><%= p2.biggest_win_margin %></h3></td>
+            <td><h3>+<%= p1.biggest_win_margin %></h3></td>
+            <td title="Largest point difference at victory (against any opponent)"><h3>Greatest Win Margin</h3></td>
+            <td><h3>+<%= p2.biggest_win_margin %></h3></td>
           </tr>
           <tr>
-            <td><h3><%= p1.biggest_loss_margin %></h3></td>
-            <td><h3>Worst Loss Margin</h3></td>
-            <td><h3><%= p2.biggest_loss_margin %></h3></td>
+            <td><h3>-<%= p1.biggest_loss_margin %></h3></td>
+            <td title="Largest point difference at loss (against any opponent)"><h3>Worst Loss Margin</h3></td>
+            <td><h3>-<%= p2.biggest_loss_margin %></h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.most_points_won_in_a_row %></h3></td>
-            <td><h3>Most Consecutive Points Won</h3></td>
+            <td title="Most points won in a row in one game (against any opponent)"><h3>Most Consecutive Points Won</h3></td>
             <td><h3><%= p2.most_points_won_in_a_row %></h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.most_points_lost_in_a_row %></h3></td>
-            <td><h3>Most Consecutive Points Lost</h3></td>
+            <td title="Most points lost in a row in one game (against any opponent)"><h3>Most Consecutive Points Lost</h3></td>
             <td><h3><%= p2.most_points_lost_in_a_row %></h3></td>
           </tr>
           <tr>
             <td><h3><%= p1_most_played_with_opponent %></h3></td>
-            <td><h3>Most Played With Opponent</h3></td>
+            <td title="The opponent with whom the player has played with the most"><h3>Most Played With Opponent</h3></td>
             <td><h3><%= p2_most_played_with_opponent %></h3></td>
           </tr>
           <tr>
-            <td><h3><%= p1.most_points_lost_in_a_row %></h3></td>
-            <td><h3>Most Consecutive Points Lost</h3></td>
-            <td><h3><%= p2.most_points_lost_in_a_row %></h3></td>
-          </tr>
-          <tr>
             <td><h3>-</h3></td>
-            <td><h3>Stats From Games Played Against Each Other Are Displayed Below</h3></td>
+            <td title="The previous stats were the player's overall stats. The below stats are accrued solely from games that <%= p1.name %> & <%= p2.name %> played together"><h3>Stats From Games Played Against Each Other Are Displayed Below</h3></td>
             <td><h3>-</h3></td>
           </tr>
           <tr>
             <td><h3><%= games_played_together %></h3></td>
-            <td><h3>Games Played Together</h3></td>
+            <td title="The amount of games that <%= p1.name %> has played with <%= p2.name %>"><h3>Games Played Together</h3></td>
             <td><h3><%= games_played_together %></h3></td>
           </tr>
           <tr>
             <td><h3><%= p1_win_ratio_against_p2 * 100 %>%</h3></td>
-            <td><h3>Win Ratio Against Each Other</h3></td>
+            <td title="<%= p1.name %> won <%= p1_win_ratio_against_p2 * 100 %>% of their games against <%= p2.name %>, and <%= p2.name %> won <%= p2_win_ratio_against_p1 * 100 %>% of their games against <%= p1.name %>"><h3>Win Ratio Against Each Other</h3></td>
             <td><h3><%= p2_win_ratio_against_p1 * 100 %>%</h3></td>
           </tr>
           <tr>
             <td><h3><%= p1_wins_against_p2 %></h3></td>
-            <td><h3>Wins Against Each Other</h3></td>
+            <td title="<%= p1.name %> won <%= p1_wins_against_p2 %> games against <%= p2.name %>, and <%= p2.name %> won <%= p2_wins_against_p1 %> games against <%= p1.name %>"><h3>Wins Against Each Other</h3></td>
             <td><h3><%= p2_wins_against_p1 %></h3></td>
           </tr>
         </tbody>
