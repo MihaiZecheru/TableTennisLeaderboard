@@ -165,12 +165,16 @@ export async function GetMostPlayedWithOpponent(player_id) {
     const db = await db_promise;
     const opponent = await db.get(
       `SELECT players.name AS opponent_name, COUNT(*) AS games_played
-       FROM games
-       JOIN players ON players.id = games.p2_id
-       WHERE games.p1_id = ?
-       GROUP BY players.id
+       FROM (
+         SELECT p2_id AS opponent_id FROM games WHERE p1_id = ?
+         UNION ALL
+         SELECT p1_id AS opponent_id FROM games WHERE p2_id = ?
+       ) AS combined
+       JOIN players ON players.id = combined.opponent_id
+       GROUP BY combined.opponent_id
        ORDER BY games_played DESC
        LIMIT 1`,
+      player_id,
       player_id
     );
     return opponent?.opponent_name || null;
@@ -179,6 +183,7 @@ export async function GetMostPlayedWithOpponent(player_id) {
     return null;
   }
 }
+
 
 /**
  * Get the amount of games played by two players together
