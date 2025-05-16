@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Tennis</title>
+  <link rel="stylesheet" href="/index.css">
+  <link rel="icon" href="/table_tennis_racket.png" type="image/x-icon">
+</head>
+<body>
+  <div class="header">
+    <h1 class="header-h1">Player Statistics for <%= player.name %></h1>
+    <div class="redirect-btns-container">
+      <h1 class="redirect-btn redirect-btn-compare-players">Compare Players</h1>
+      <h1 class="redirect-btn redirect-btn-leaderboard">Leaderboard</h1>
+      <h1 class="redirect-btn redirect-btn-home">Home</h1>
+    </div>
+    <!-- TODO: add filter dropdown for filtering by set length. users can choose 6, 11, or 21 from the dropdown to filter -->
+  </div>
+
+  <main class="purple-bg">
+  <div class="centered-table-container" style="margin-top: calc(11rem); height: calc(100vh - 11rem);">
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td title="Overall win ratio against all opponents"><h3>Win Ratio</td></h2>
+            <td><h3><%= player.game_win_ratio * 100 %>%</h3></td>
+          </tr>
+          <tr>
+            <td title="Total wins against all opponents"><h3>Wins</h3></td>
+            <td><h3><%= player.total_wins %></h3></td>
+          </tr>
+          <tr>
+            <td title="Total losses against all opponents"><h3>Losses</h3></td>
+            <td><h3><%= player.total_losses %></h3></td>
+          </tr>
+          <tr>
+            <td title="Total games played against all opponents"><h3>Games Played</h3></td>
+            <td><h3><%= player.total_games_played %></h3></td>
+          </tr>
+          <tr>
+            <td title="Overall ratio of points won v. lost against all opponents"><h3>Point Win Ratio</h3></td>
+            <td><h3><%= player.point_win_ratio * 100 %>%</h3></td>
+          </tr>
+          <tr>
+            <td title="Total points won against all opponents"><h3>Points Won</h3></td>
+            <td><h3><%= player.points_won %></h3></td>
+          </tr>
+          <tr>
+            <td title="Total points lost against all opponents"><h3>Points Lost</h3></td>
+            <td><h3><%= player.points_lost %></h3></td>
+          </tr>
+          <tr>
+            <td title="Total points played against all opponents"><h3>Points Played</h3></td>
+            <td><h3><%= player.total_points_played %></h3></td>
+          </tr>
+          <tr>
+            <td title="Most games won in a row (across all opponents)"><h3>Longest Win Streak</h3></td>
+            <td><h3><%= player.longest_win_streak %></h3></td>
+          </tr>
+          <tr>
+            <td title="Most games lost in a row (across all opponents)"><h3>Longest Loss Streak</h3></td>
+            <td><h3><%= player.longest_loss_streak %></h3></td>
+          </tr>
+          <tr>
+            <td title="Longest match played in terms of time (against any opponent)"><h3>Longest Match</h3></td>
+            <td><h3><%= format_game_duration(player.longest_game_duration) %></h3></td>
+          </tr>
+          <tr>
+            <td title="Longest match played in terms of points (against any opponent)"><h3>Most Points in a Game</h3></td>
+            <td><h3><%= player.most_points_in_one_game %></h3></td>
+          </tr>
+          <tr>
+            <td title="Largest point difference at victory (against any opponent)"><h3>Greatest Win Margin</h3></td>
+            <td><h3>+<%= player.biggest_win_margin %></h3></td>
+          </tr>
+          <tr>
+            <td title="Largest point difference at loss (against any opponent)"><h3>Worst Loss Margin</h3></td>
+            <td><h3>-<%= player.biggest_loss_margin %></h3></td>
+          </tr>
+          <tr>
+            <td title="Most points won in a row in one game (against any opponent)"><h3>Most Consecutive Points Won</h3></td>
+            <td><h3><%= player.most_points_won_in_a_row %></h3></td>
+          </tr>
+          <tr>
+            <td title="Most points lost in a row in one game (against any opponent)"><h3>Most Consecutive Points Lost</h3></td>
+            <td><h3><%= player.most_points_lost_in_a_row %></h3></td>
+          </tr>
+          <tr>
+            <td title="The opponent with whom the player has played with the most"><h3>Most Played With Opponent</h3></td>
+            <td><h3><%= most_played_with_opponent %></h3></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </main>
+
+  <script defer>
+    document.querySelector('.redirect-btn-compare-players').addEventListener('click', () => {
+      window.location.href = '/compare-players';
+    });
+
+    document.querySelector('.redirect-btn-leaderboard').addEventListener('click', () => {
+      window.location.href = '/leaderboard';
+    });
+
+    document.querySelector('.redirect-btn-home').addEventListener('click', () => {
+      window.location.href = '/';
+    });
+  </script>
+</body>
+</html>
