@@ -294,3 +294,12 @@ body, main {
 .centered-table-container::-webkit-scrollbar {
   display: none;
 }
+
+.purple-bg {
+  background-color: var(--cool-purple);
+}
+
+#p1-name-redirect,
+#p2-name-redirect {
+  cursor: pointer;
+}
