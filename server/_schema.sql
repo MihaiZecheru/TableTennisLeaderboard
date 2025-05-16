@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS Players (
     biggest_loss_margin INTEGER DEFAULT 0,
     most_points_won_in_a_row INTEGER DEFAULT 0,
     most_points_lost_in_a_row INTEGER DEFAULT 0,
+    time_played INTEGER DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now'))
 );
 
@@ -49,3 +50,4 @@ INSERT INTO Players (name) VALUES
 ('Daria'),
 ('Erin'),
 ('Taticu');
+DELETE FROM Players WHERE name = 'DELETE'; -- ID will start at 10
