@@ -18,7 +18,7 @@
   <ul class="game-list">
     <% games.forEach((game) => { %>
       <li>
-        <div class="game-card" onclick="window.location.href='/game/<%= game.id %>'">
+        <div class="game-card" onclick="window.location.href='/game/<%= game.id %>'" title="Click to view game details">
 
           <div class="game-card-players">
             <% if (game.winner_id === game.p1_id) { %>
