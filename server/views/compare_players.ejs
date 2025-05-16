@@ -38,15 +38,25 @@
           </tr>
         </thead>
         <tbody>
-          <!-- <tr>
-            <td></td>
-            <td><h1>Overall Statistics</h1></td>
-            <td></td>
-          </tr> -->
           <tr>
-            <td><h3><%= p1.game_win_ratio * 100 %>%</h3></td>
+            <td><h3><%= p1.elo %></h3></td>
+            <td title="Current rating of the player. Note that the starting ELO is 1000"><h3>Current Elo Rating</td></h2>
+            <td><h3><%= p2.elo %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.highest_elo %></h3></td>
+            <td title="Highest rating that the player has ever had. Note that the starting ELO is 1000"><h3>Highest Elo Rating</td></h2>
+            <td><h3><%= p2.highest_elo %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= p1.lowest_elo %></h3></td>
+            <td title="Lowest rating that the player has ever had. Note that the starting ELO is 1000"><h3>Lowest Elo Rating</td></h2>
+            <td><h3><%= p2.lowest_elo %></h3></td>
+          </tr>
+          <tr>
+            <td><h3><%= Math.floor(p1.game_win_ratio * 1000) / 10 %>%</h3></td>
             <td title="Overall win ratio against all opponents"><h3>Win Ratio</td></h2>
-            <td><h3><%= p2.game_win_ratio * 100 %>%</h3></td>
+            <td><h3><%= Math.floor(p2.game_win_ratio * 1000) / 10 %>%</h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.total_wins %></h3></td>
@@ -64,9 +74,9 @@
             <td><h3><%= p2.total_games_played %></h3></td>
           </tr>
           <tr>
-            <td><h3><%= p1.point_win_ratio * 100 %>%</h3></td>
+            <td><h3><%= Math.floor(p1.point_win_ratio * 1000) / 10 %>%</h3></td>
             <td title="Overall ratio of points won v. lost against all opponents"><h3>Point Win Ratio</h3></td>
-            <td><h3><%= p2.point_win_ratio * 100 %>%</h3></td>
+            <td><h3><%= Math.floor(p2.point_win_ratio * 1000) / 10 %>%</h3></td>
           </tr>
           <tr>
             <td><h3><%= p1.points_won %></h3></td>
@@ -84,6 +94,11 @@
             <td><h3><%= p2.total_points_played %></h3></td>
           </tr>
           <tr>
+            <td><h3><%= Math.floor((p1.serves_won / (p1.serves_won + p1.serves_lost)) * 1000) / 10 %>%</h3></td>
+            <td title="The percentage of serves won against all opponents"><h3>Serve Win Ratio</h3></td>
+            <td><h3><%= Math.floor((p2.serves_won / (p2.serves_won + p2.serves_lost)) * 1000) / 10 %>%</h3></td>
+          </tr>
+          <tr>
             <td><h3><%= p1.longest_win_streak %></h3></td>
             <td title="Most games won in a row (across all opponents)"><h3>Longest Win Streak</h3></td>
             <td><h3><%= p2.longest_win_streak %></h3></td>
@@ -99,7 +114,7 @@
           </tr>
           <tr>
             <td><h3><%= p1.most_points_in_one_game %></h3></td>
-            <td title="Longest match played in terms of points (against any opponent)"><h3>Most Points in a Game</h3></td>
+            <td title="Most points scored in one game (against any opponent)"><h3>Most Points in a Game</h3></td>
             <td><h3><%= p2.most_points_in_one_game %></h3></td>
           </tr>
           <tr>
@@ -138,9 +153,9 @@
             <td><h3><%= games_played_together %></h3></td>
           </tr>
           <tr>
-            <td><h3><%= p1_win_ratio_against_p2 * 100 %>%</h3></td>
-            <td title="<%= p1.name %> won <%= p1_win_ratio_against_p2 * 100 %>% of their games against <%= p2.name %>, and <%= p2.name %> won <%= p2_win_ratio_against_p1 * 100 %>% of their games against <%= p1.name %>"><h3>Win Ratio Against Each Other</h3></td>
-            <td><h3><%= p2_win_ratio_against_p1 * 100 %>%</h3></td>
+            <td><h3><%= Math.floor(p1_win_ratio_against_p2 * 1000) / 10 %>%</h3></td>
+            <td title="<%= p1.name %> won <%= Math.floor(p1_win_ratio_against_p2 * 1000) / 10 %>% of their games against <%= p2.name %>, and <%= p2.name %> won <%= Math.floor(p2_win_ratio_against_p1 * 1000 / 10) %>% of their games against <%= p1.name %>"><h3>Win Ratio Against Each Other</h3></td>
+            <td><h3><%= Math.floor(p2_win_ratio_against_p1 * 1000) / 10 %>%</h3></td>
           </tr>
           <tr>
             <td><h3><%= p1_wins_against_p2 %></h3></td>

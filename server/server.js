@@ -1,4 +1,5 @@
-import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst } from './database_functions.js';
+import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst, GetPlayerElo, UpdatePlayerStats } from './database_functions.js';
+import { CalculateNewElo } from './calculate_new_elo.js';
 import express from 'express';
 
 const PORT = 4010;
@@ -100,9 +101,21 @@ app.post('/api/upload-set', async (req, res) => {
    * point_history: [{ 's': 1, 'w': 0 }, { 's': 1, 'w': 1 }] }
    */
   const { p1_id, p2_id, set_length, point_history, started_at, ended_at } = req.body;
-  const success = await AddSetToDatabase(p1_id, p2_id, set_length, point_history, started_at, ended_at);
+  
+  if (!p1_id || !p2_id || !set_length || !point_history || !started_at || !ended_at) {
+    return res.status(400).send('Missing required fields');
+  }
 
-  if (success) {
+  const p1_elo_before_match = await GetPlayerElo(p1_id);
+  const p2_elo_before_match = await GetPlayerElo(p2_id);
+  const { p1_elo_change, p2_elo_change } = CalculateNewElo(p1_elo_before_match, p2_elo_before_match, point_history);
+  const p1_new_elo = p1_elo_before_match + p1_elo_change;
+  const p2_new_elo = p2_elo_before_match + p2_elo_change;
+
+  const success = await AddSetToDatabase(p1_id, p2_id, p1_elo_before_match, p2_elo_before_match, p1_elo_change, p2_elo_change, set_length, point_history, started_at, ended_at);
+  const stats_success = await UpdatePlayerStats(p1_id, p2_id, p1_new_elo, p2_new_elo, point_history, started_at, ended_at);
+  
+  if (success && stats_success) {
     res.status(200).send('OK');
   } else {
     res.status(400).send('ERR');
@@ -112,7 +125,3 @@ app.post('/api/upload-set', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });
-
-// TODO: something like if a user is on the game details page, they can click a button to directly compare the stats of the two players that played the game
-
-// TODO: when a new game is uploaded, make sure to process it and update player stats

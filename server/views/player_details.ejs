@@ -27,8 +27,20 @@
         </thead>
         <tbody>
           <tr>
+            <td title="Current rating of the player. Note that the starting ELO is 1000"><h3>Current Elo Rating</td></h2>
+            <td><h3><%= player.elo %></h3></td>
+          </tr>
+          <tr>
+            <td title="Highest rating that the player has ever had. Note that the starting ELO is 1000"><h3>Highest Elo Rating</td></h2>
+            <td><h3><%= player.highest_elo %></h3></td>
+          </tr>
+          <tr>
+            <td title="Lowest rating that the player has ever had. Note that the starting ELO is 1000"><h3>Lowest Elo Rating</td></h2>
+            <td><h3><%= player.lowest_elo %></h3></td>
+          </tr>
+          <tr>
             <td title="Overall win ratio against all opponents"><h3>Win Ratio</td></h2>
-            <td><h3><%= player.game_win_ratio * 100 %>%</h3></td>
+            <td><h3><%= Math.floor(player.game_win_ratio * 1000) / 10 %>%</h3></td>
           </tr>
           <tr>
             <td title="Total wins against all opponents"><h3>Wins</h3></td>
@@ -44,7 +56,7 @@
           </tr>
           <tr>
             <td title="Overall ratio of points won v. lost against all opponents"><h3>Point Win Ratio</h3></td>
-            <td><h3><%= player.point_win_ratio * 100 %>%</h3></td>
+            <td><h3><%= Math.floor(player.point_win_ratio * 1000) / 10 %>%</h3></td>
           </tr>
           <tr>
             <td title="Total points won against all opponents"><h3>Points Won</h3></td>
@@ -59,6 +71,10 @@
             <td><h3><%= player.total_points_played %></h3></td>
           </tr>
           <tr>
+            <td title="The percentage of serves won against all opponents"><h3>Serve Win Ratio</h3></td>
+            <td><h3><%= Math.floor((player.serves_won / (player.serves_won + player.serves_lost)) * 1000) / 10 %>%</h3></td>
+          </tr>
+          <tr>
             <td title="Most games won in a row (across all opponents)"><h3>Longest Win Streak</h3></td>
             <td><h3><%= player.longest_win_streak %></h3></td>
           </tr>
@@ -71,7 +87,7 @@
             <td><h3><%= format_game_duration(player.longest_game_duration) %></h3></td>
           </tr>
           <tr>
-            <td title="Longest match played in terms of points (against any opponent)"><h3>Most Points in a Game</h3></td>
+            <td title="Most points scored in one game (against any opponent)"><h3>Most Points in a Game</h3></td>
             <td><h3><%= player.most_points_in_one_game %></h3></td>
           </tr>
           <tr>

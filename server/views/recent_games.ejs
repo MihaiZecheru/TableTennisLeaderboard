@@ -4,6 +4,7 @@
   <title>Table Tennis</title>
   <link rel="stylesheet" href="/index.css">
   <link rel="icon" href="/table_tennis_racket.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div class="header">
@@ -12,7 +13,6 @@
       <h1 class="redirect-btn redirect-btn-compare-players">Compare Players</h1>
       <h1 class="redirect-btn redirect-btn-leaderboard">Leaderboard</h1>
     </div>
-    <!-- TODO: add filter dropdown for filtering by set length. users can choose 6, 11, or 21 from the dropdown to filter -->
   </div>
 
   <ul class="game-list">
@@ -22,9 +22,9 @@
 
           <div class="game-card-players">
             <% if (game.winner_id === game.p1_id) { %>
-              <h2><u><%= gpn(game.p1_id) %></u> vs <%= gpn(game.p2_id) %></h2>
+              <h2><i class="fa-solid fa-medal"></i> (<%= game.p1_elo_before_match %>) <u><%= gpn(game.p1_id) %></u> vs <%= gpn(game.p2_id) %> (<%= game.p2_elo_before_match %>)</h2>
             <% } else { %>
-              <h2><%= gpn(game.p1_id) %> vs <u><%= gpn(game.p2_id) %></u></h2>
+              <h2>(<%= game.p1_elo_before_match %>) <%= gpn(game.p1_id) %> vs <u><%= gpn(game.p2_id) %></u> (<%= game.p2_elo_before_match %>) <i class="fa-solid fa-medal"></i></h2>
             <% } %>
           </div>
 
