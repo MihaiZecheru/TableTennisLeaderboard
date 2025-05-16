@@ -11,9 +11,9 @@
   <div class="header">
     <h1 class="header-h1">
       <% if (game.winner_id === game.p1_id) { %>
-        <span class="p1-redirect"><i class="fa-solid fa-medal"></i> <u><%= gpn(game.p1_id) %></u></span> vs <span class="p2-redirect"><%= gpn(game.p2_id) %></span>
+        <span class="p1-redirect" title="Go to player stats page"><i class="fa-solid fa-medal"></i> <u><%= gpn(game.p1_id) %></u></span> vs <span class="p2-redirect" title="Go to player stats page"><%= gpn(game.p2_id) %></span>
       <% } else { %>
-        <span class="p1-redirect"><%= gpn(game.p1_id) %></span> vs <span class="p2-redirect"><i class="fa-solid fa-medal"></i> <u>><%= gpn(game.p2_id) %></u></span>
+        <span class="p1-redirect" title="Go to player stats page"><%= gpn(game.p1_id) %></span> vs <span class="p2-redirect" title="Go to player stats page"><i class="fa-solid fa-medal"></i> <u>><%= gpn(game.p2_id) %></u></span>
       <% } %>
     </h1>
     <div class="redirect-btns-container">
