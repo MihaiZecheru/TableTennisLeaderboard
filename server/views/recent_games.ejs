@@ -22,9 +22,9 @@
 
           <div class="game-card-players">
             <% if (game.winner_id === game.p1_id) { %>
-              <h2><i class="fa-solid fa-medal"></i> (<%= game.p1_elo_before_match %>) <u><%= gpn(game.p1_id) %></u> vs <%= gpn(game.p2_id) %> (<%= game.p2_elo_before_match %>)</h2>
+              <h2><i class="fa-solid fa-medal"></i> <u><%= gpn(game.p1_id) %></u> vs <%= gpn(game.p2_id) %></h2>
             <% } else { %>
-              <h2>(<%= game.p1_elo_before_match %>) <%= gpn(game.p1_id) %> vs <u><%= gpn(game.p2_id) %></u> (<%= game.p2_elo_before_match %>) <i class="fa-solid fa-medal"></i></h2>
+              <h2><%= gpn(game.p1_id) %> vs <u><%= gpn(game.p2_id) %></u> <i class="fa-solid fa-medal"></i></h2>
             <% } %>
           </div>
 
