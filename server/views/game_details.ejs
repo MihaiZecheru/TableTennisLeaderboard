@@ -47,7 +47,7 @@
     </div>
 
     <div>
-      <h2><i class="fa-solid fa-calendar"></i> <%= new Date(game.started_at).toLocaleDateString() %></h2>
+      <h2><i class="fa-solid fa-calendar"></i> <%= UtcToPst(game.started_at) %></h2>
     </div>
 
   </div>

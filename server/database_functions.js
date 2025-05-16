@@ -1,5 +1,6 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import { DateTime } from 'luxon';
 
 import Game from './database_types/Game.js';
 import Player from './database_types/Player.js';
@@ -245,4 +246,8 @@ export async function GetPlayerWinsAgainstOpponent(player_id, opponent_id) {
     console.error('Error fetching player wins against opponent:', err.message);
     return null;
   }
+}
+
+export function UtcToPst(date) {
+  return DateTime.fromISO(date.replace(' ', 'T') + 'Z', { zone: 'utc' }).setZone('America/Los_Angeles').toFormat('MM/dd/yyyy');
 }

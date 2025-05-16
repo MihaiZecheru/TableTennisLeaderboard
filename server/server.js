@@ -1,4 +1,4 @@
-import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent } from './database_functions.js';
+import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst } from './database_functions.js';
 import express from 'express';
 
 const PORT = 4010;
@@ -17,7 +17,7 @@ app.get('/', async (req, res) => {
   const players = await GetAllPlayers();
   if (!games) return res.status(500).send('Error fetching games');
   // gpn stands for "get player name"
-  res.render('recent_games', { games, players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
+  res.render('recent_games', { games, players, UtcToPst, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
 });
 
 /**
@@ -43,7 +43,7 @@ app.get('/game/:id', async (req, res) => {
   const players = await GetAllPlayers();
   const game = await GetGameByID(game_id);
   if (!game) return res.status(500).send('Error fetching game - probably invalid ID');
-  res.render('game_details', { game, players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown', gpid: (num) => num === 1 ? game.p1_id : game.p2_id });
+  res.render('game_details', { game, players, UtcToPst, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown', gpid: (num) => num === 1 ? game.p1_id : game.p2_id });
 });
 
 /**
@@ -53,7 +53,8 @@ app.get('/player/:id', async (req, res) => {
   const player_id = req.params.id;
   const player = await GetPlayerByID(player_id);
   if (!player) return res.status(500).send('Error fetching player - probably invalid ID');
-  res.render('player_details', { player });
+  const most_played_with_opponent = await GetMostPlayedWithOpponent(player_id);
+  res.render('player_details', { player, most_played_with_opponent, format_game_duration });
 });
 
 /**
