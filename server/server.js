@@ -42,7 +42,7 @@ app.get('/game/:id', async (req, res) => {
   const game_id = req.params.id;
   const players = await GetAllPlayers();
   const game = await GetGameByID(game_id);
-  if (!game) return res.status(500).send('Error fetching game - probably invalid ID');
+  if (!game) return res.status(500).send(`Error fetching game with ID=${game_id} - probably invalid ID`);
   res.render('game_details', { game, players, UtcToPst, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown', gpid: (num) => num === 1 ? game.p1_id : game.p2_id });
 });
 
@@ -52,7 +52,7 @@ app.get('/game/:id', async (req, res) => {
 app.get('/player/:id', async (req, res) => {
   const player_id = req.params.id;
   const player = await GetPlayerByID(player_id);
-  if (!player) return res.status(500).send('Error fetching player - probably invalid ID');
+  if (!player) return res.status(500).send(`Error fetching player with ID=${player_id} - probably invalid ID`);
   const most_played_with_opponent = await GetMostPlayedWithOpponent(player_id);
   res.render('player_details', { player, most_played_with_opponent, format_game_duration });
 });
@@ -72,7 +72,8 @@ app.get('/compare-players', async (req, res) => {
   if (p1_id && p2_id) {
     const p1 = await GetPlayerByID(p1_id);
     const p2 = await GetPlayerByID(p2_id);
-    if (!p1 || !p2) return res.status(500).send('Error fetching player - probably invalid ID');
+    if (!p1) return res.status(500).send(`Error fetching player with ID=${p1_id} - probably invalid ID`);
+    if (!p2) return res.status(500).send(`Error fetching player with ID=${p2_id} - probably invalid ID`);
     const p1_most_played_with_opponent = await GetMostPlayedWithOpponent(p1_id);
     const p2_most_played_with_opponent = await GetMostPlayedWithOpponent(p2_id);
     const games_played_together = await GetCountOfGamesPlayedTogether(p1_id, p2_id);
