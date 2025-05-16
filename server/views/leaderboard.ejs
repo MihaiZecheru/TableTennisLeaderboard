@@ -1,1 +1,51 @@
-<!-- TODO: add filter dropdown for filtering by different stats. User can filter by win ratio, most points, biggest win, etc. The leaderboard is mainly win ratio, though -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Tennis</title>
+  <link rel="stylesheet" href="/index.css">
+  <link rel="icon" href="/table_tennis_racket.png" type="image/x-icon">
+</head>
+<body>
+  
+  <div class="header">
+    <h1 class="header-h1">Player Leaderboard</h1>
+    <div class="redirect-btns-container">
+      <h1 class="redirect-btn redirect-btn-compare-players">Compare Players</h1>
+      <h1 class="redirect-btn redirect-btn-home">Home</h1>
+    </div>
+  </div>
+
+  <main class="purple-bg">
+    <div class="centered-table-container" style="margin-top: calc(11rem); height: calc(100vh - 11rem);">
+      <div style="width: 20vw;">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% players.forEach((player, index) => { %>
+              <tr>
+                <td><h2><%= index + 1 %></h2></td>
+                <td><h2><%= gpn(player.id) %> (<%= player.elo %>)</h2></td>
+              </tr>
+            <% }) %>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script defer>
+    document.querySelector('.redirect-btn-compare-players').addEventListener('click', () => {
+      window.location.href = '/compare-players';
+    });
+
+    document.querySelector('.redirect-btn-home').addEventListener('click', () => {
+      window.location.href = '/';
+    });
+  </script>
+
+</body>
+</html>
