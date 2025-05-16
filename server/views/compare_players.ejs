@@ -32,9 +32,9 @@
       <table>
         <thead>
           <tr>
-            <th><h1><%= p1.name %></h1></th>
+            <th><h1 id="p1-name-redirect" title="Go to player stats page"><%= p1.name %></h1></th>
             <th><h1>v</h1></th>
-            <th><h1><%= p2.name %></h1></th>
+            <th><h1 id="p2-name-redirect" title="Go to player stats page"><%= p2.name %></h1></th>
           </tr>
         </thead>
         <tbody>
@@ -84,7 +84,6 @@
             <td><h3><%= p2.total_points_played %></h3></td>
           </tr>
           <tr>
-            <tr>
             <td><h3><%= p1.longest_win_streak %></h3></td>
             <td title="Most games won in a row (across all opponents)"><h3>Longest Win Streak</h3></td>
             <td><h3><%= p2.longest_win_streak %></h3></td>
@@ -160,6 +159,14 @@
 
     document.querySelector('.redirect-btn-home').addEventListener('click', () => {
       window.location.href = '/';
+    });
+
+    document.getElementById('p1-name-redirect').addEventListener('click', () => {
+      window.location.href = '/player/' + <%= p1.id %>;
+    });
+
+    document.getElementById('p2-name-redirect').addEventListener('click', () => {
+      window.location.href = '/player/' + <%= p2.id %>;
     });
   </script>
 
