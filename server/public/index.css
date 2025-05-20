@@ -30,6 +30,12 @@ body, main {
   padding-left: 0;
   color: var(--light-gray);
   margin: 0;
+  height: calc(100vh - 11rem);
+  overflow-y: auto;
+}
+
+.game-list::-webkit-scrollbar {
+  display: none;
 }
 
 .game-list li:nth-child(even) {
