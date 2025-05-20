@@ -11,9 +11,9 @@
   <div class="header">
     <h1 class="header-h1">
       <% if (game.winner_id === game.p1_id) { %>
-        <span class="p1-redirect" title="Go to player stats page"><i class="fa-solid fa-medal"></i> <span>(<%= game.p1_elo_before_match %>)</span> <u><%= gpn(game.p1_id) %></u></span> vs <span class="p2-redirect" title="Go to player stats page"><%= gpn(game.p2_id) %> (<%= game.p2_elo_before_match %>)</span>
+        <i class="fa-solid fa-medal" title="<%= gpn(game.p1_id) %> won"></i> <span title="<%= gpn(game.p1_id) %> had a rating of <%= game.p1_elo_before_match %> before the match. They gained <%= game.p1_elo_change %> Elo points">(<%= game.p1_elo_before_match %> + <%= game.p1_elo_change %>)</span> <span class="p1-redirect" title="Go to player stats page"><u><%= gpn(game.p1_id) %></u></span> vs <span class="p2-redirect" title="Go to player stats page"><%= gpn(game.p2_id) %></span> <span title="<%= gpn(game.p2_id) %> had a rating of <%= game.p2_elo_before_match %> before the match. They lost <%= abs(game.p2_elo_change) %> Elo points">(<%= game.p2_elo_before_match %> - <%= abs(game.p2_elo_change) %>)</span>
       <% } else { %>
-        <span class="p1-redirect" title="Go to player stats page">(<%= game.p1_elo_before_match %>)  <%= gpn(game.p1_id) %></span> vs <span class="p2-redirect" title="Go to player stats page"> <u>><%= gpn(game.p2_id) %></u> <span>(<%= game.p2_elo_before_match %>)</span> <i class="fa-solid fa-medal"></i></span>
+        <span title="<%= gpn(game.p1_id) %> had a rating of <%= game.p1_elo_before_match %> before the match. They lost <%= abs(game.p1_elo_change) %> Elo points.">(<%= game.p1_elo_before_match %> - <%= abs(game.p1_elo_change) %>)</span> <span class="p1-redirect" title="Go to player stats page"><%= gpn(game.p1_id) %></span> vs <span class="p2-redirect" title="Go to player stats page"> <u><%= gpn(game.p2_id) %></u></span> <span title="<%= gpn(game.p2_id) %> had a rating of <%= game.p2_elo_before_match %> before the match. They won <%= game.p2_elo_change %> Elo points">(<%= game.p2_elo_before_match %> + <%= game.p2_elo_change %>)</span> <i class="fa-solid fa-medal" title="<%= gpn(game.p2_id) %> won"></i>
       <% } %>
     </h1>
     <div class="redirect-btns-container">

@@ -44,7 +44,7 @@ app.get('/game/:id', async (req, res) => {
   const players = await GetAllPlayers();
   const game = await GetGameByID(game_id);
   if (!game) return res.status(500).send(`Error fetching game with ID=${game_id} - probably invalid ID`);
-  res.render('game_details', { game, players, UtcToPst, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown', gpid: (num) => num === 1 ? game.p1_id : game.p2_id });
+  res.render('game_details', { game, players, UtcToPst, abs: Math.abs, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown', gpid: (num) => num === 1 ? game.p1_id : game.p2_id });
 });
 
 /**
