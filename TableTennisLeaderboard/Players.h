@@ -7,7 +7,7 @@ struct Player
   const char name[9]; // The name from the database (VARCHAR(8)). 8 chars + null terminator
 };
 
-const uint8_t SAVED_PLAYER_COUNT = 3;
+const uint8_t SAVED_PLAYER_COUNT = 4;
 
 // TODO: add more players.
 /**
@@ -17,7 +17,8 @@ const uint8_t SAVED_PLAYER_COUNT = 3;
 const Player ALL_SAVED_PLAYERS[SAVED_PLAYER_COUNT] = {
   {10, "Chris"},
   {11, "Daria"},
-  {12, "Erin"}
+  {12, "Erin"},
+  {13, "Taticu"}
 };
 
 #endif

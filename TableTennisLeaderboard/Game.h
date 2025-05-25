@@ -57,7 +57,15 @@ private:
    */
   const Player& get_current_server()
   {
-    return player_serving == 1 ? p1 : p2;
+    return this->player_serving == 1 ? p1 : p2;
+  }
+
+  /**
+   * @returns True if the game is currently in deuce, false otherwise
+   */
+  bool in_deuce()
+  {
+    return (set_length == 21 && p1_score >= 20 && p2_score >= 20) || (set_length == 11 && p1_score >= 10 && p2_score >= 10);
   }
 
   /**
@@ -65,27 +73,29 @@ private:
    */
   uint8_t calculate_remaining_serves()
   {
-    if (set_length == 21)
+    if (in_deuce() || set_length == 6) // One serve per player during deuce or when playing first to 6
+      return 1;
+    else if (set_length == 21)
       return 5 - (point_count % 5);
     else if (set_length == 11)
       return 2 - (point_count % 2);
-    else if (set_length == 6)
-      return 1; // one serve per player
   }
 
   /**
    * Change the server if it's time for a swap;
    * this is every 5 points for a set of 21,
    * every 2 points for a set of 11,
-   * and every point for a set of 6
+   * and every point for a set of 6.
+   * 
+   * Note: this function is called every time a point is added
    */
   void change_server_if_necessary()
   {
-    if (set_length == 21 && point_count % 5 == 0)
+    if (in_deuce() || set_length == 6) // Server changes every point during deuce and when playing first to 6
+      __change_server();
+    else if (set_length == 21 && point_count % 5 == 0)
       __change_server();
     else if (set_length == 11 && point_count % 2 == 0)
-      __change_server();
-    else if (set_length == 6) // swap after every point; swap is always necessary
       __change_server();
   }
 
@@ -132,8 +142,9 @@ public:
     
     // Will change_server only if it's time to
     change_server_if_necessary();
-    // Update OLED
+    // Update OLED & scoreboards
     this->ShowServeInfoMessage();
+    this->UpdateScoreboards();
   }
 
   /**
@@ -148,8 +159,9 @@ public:
 
     // Will change_server only if it's time to
     change_server_if_necessary();
-    // Update OLED
+    // Update OLED & scoreboards
     this->ShowServeInfoMessage();
+    this->UpdateScoreboards();
   }
 
   void UpdateScoreboards()
@@ -164,6 +176,38 @@ public:
   bool CheckForWin()
   {
     return (p1_score >= set_length || p2_score >= set_length) && abs(p1_score - p2_score) >= 2;
+  }
+
+  void UndoLastPoint()
+  {
+    if (this->point_count == 0) return;
+    PointRecord point = this->point_history[this->point_count - 1];
+    this->point_count--;
+
+    // Undo score awarded from last point
+    if (point.player_who_won == 1)
+    {
+      // Player 1 won the last point (that is being undone), so decrement his score
+      this->p1_score--;
+    }
+    else if (point.player_who_won == 2)
+    {
+      // Player 2 won the last point (that is being undone), so decrement his score
+      this->p1_score--;
+    }
+
+    // Set server to the last server
+    if (point.player_who_served == 1)
+    {
+      this->player_serving = 1;
+    }
+    else if (point.player_who_served == 2)
+    {
+      this->player_serving = 2;
+    }
+
+    UpdateScoreboards();
+    this->ShowServeInfoMessage();
   }
 
   const Player* GetWinner()

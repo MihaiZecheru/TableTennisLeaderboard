@@ -37,7 +37,7 @@ void ConfigureRTC()
   }
   else
   {
-    Serial.println("✅ Time synced (UTC): " + String(ctime(&now)));
+    Serial.println("Time synced (UTC): " + String(ctime(&now)));
   }
 
   WiFi.disconnect(true);

@@ -5,6 +5,7 @@
 #include "OLED.h"
 #include "Scoreboards.h"
 #include "ConfigureRTC.h"
+#include "ButtonBoard.h"
 
 void setup()
 {
@@ -13,6 +14,8 @@ void setup()
   initialize_OLED();
   initialize_rotary_encoder();
   initialize_scoreboards();
+  initialize_button_board();
+  Serial.println("\n✅ ESP32 READY\n");
 }
 
 void loop()
@@ -23,7 +26,15 @@ void loop()
   Game* game = PreGamePhase();
 
   // Listens for P1's button presses and updates the TM1637 scoreboard displays
-  MidGamePhase(game);
+  // If the user pressed the Reset Button, then reset_called will be true
+  bool reset_called = MidGamePhase(game);
+  if (reset_called)
+  {
+    ClearScoreboards();
+    delete game;
+    return;
+  }
+  // else: proceed as normal to EndGamePhase
 
   // Flashes the scoreboards, resets the game, and sends
   // the game data over wifi to the scoreboard server

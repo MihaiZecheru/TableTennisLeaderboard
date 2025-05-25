@@ -4,28 +4,30 @@
 #include "SendGameData.h"
 #include "Scoreboards.h"
 
-// The amount of ms that each flash takes in FlashScoreboard()
-#define FLASH_DELAY 500
-
-// The amount of ms that each dot in the UploadingScoresMessage animation takes
-#define DOT_DELAY 400
+// The amount of ms between flashes and between elipsis update
+// Stands for multi-purpose delay
+#define MP_DELAY 300
 
 /**
  * Flashes the scoreboards & sends the game data
  * over wifi to the scoreboard server
  */
-void EndGamePhase(Game* game)
-{
-  for (uint8_t i = 0; i < 3; i++)
+void EndGamePhase(Game* game) {
+  // Flash scoreboards & show Uploading scores message simultaneously
+  for (uint8_t i = 0; i < 4; i++)
   {
+    ClearScoreboards();
     ShowUploadingScoresMessage(0);
-    delay(DOT_DELAY);
+    delay(MP_DELAY);
     ShowUploadingScoresMessage(1);
-    delay(DOT_DELAY);
+    game->UpdateScoreboards(); // write the numbers back on
+    delay(MP_DELAY);
     ShowUploadingScoresMessage(2);
-    delay(DOT_DELAY);
+    ClearScoreboards();
+    delay(MP_DELAY);
     ShowUploadingScoresMessage(3);
-    delay(DOT_DELAY);
+    game->UpdateScoreboards();
+    delay(MP_DELAY);
   }
 
   // Send game data to server--keep trying until it's successful, because the game data shouldn't be lost
@@ -44,14 +46,6 @@ void EndGamePhase(Game* game)
   if (game->GetWinner() != nullptr)
   {
     ShowGameOverMessage(game->GetWinner()->name, game->GetP1Score(), game->GetP2Score());
-  }
-
-  // Flash scoreboards
-  for (uint8_t i = 0; i < 5; i++) {
-    ClearScoreboards();
-    delay(FLASH_DELAY);
-    game->UpdateScoreboards(); // write the numbers back on
-    delay(FLASH_DELAY);
   }
 
   ClearScoreboards();
