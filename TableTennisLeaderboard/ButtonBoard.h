@@ -19,7 +19,7 @@ void initialize_button_board()
  */
 bool P1ButtonPressed()
 {
-  return digitalRead(K1) == LOW;
+  return digitalRead(K4) == LOW;
 }
 
 /**
@@ -27,7 +27,7 @@ bool P1ButtonPressed()
  */
 bool P2ButtonPressed()
 {
-  return digitalRead(K2) == LOW;
+  return digitalRead(K3) == LOW;
 }
 
 /**
@@ -35,7 +35,7 @@ bool P2ButtonPressed()
  */
 bool UndoPointButtonPressed()
 {
-  return digitalRead(K3) == LOW;
+  return digitalRead(K2) == LOW;
 }
 
 /**
@@ -43,7 +43,7 @@ bool UndoPointButtonPressed()
  */
 bool ResetGameButtonPressed()
 {
-  return digitalRead(K4) == LOW;
+  return digitalRead(K1) == LOW;
 }
 
 #endif
