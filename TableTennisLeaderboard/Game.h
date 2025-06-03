@@ -182,6 +182,7 @@ public:
   {
     if (this->point_count == 0) return;
     PointRecord point = this->point_history[this->point_count - 1];
+    this->point_history[point_count] = {}; // Zero out the last record
     this->point_count--;
 
     // Undo score awarded from last point
