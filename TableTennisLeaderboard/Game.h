@@ -193,7 +193,7 @@ public:
     else if (point.player_who_won == 2)
     {
       // Player 2 won the last point (that is being undone), so decrement his score
-      this->p1_score--;
+      this->p2_score--;
     }
 
     // Set server to the last server
