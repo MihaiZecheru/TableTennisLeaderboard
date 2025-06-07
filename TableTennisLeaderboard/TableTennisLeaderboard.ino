@@ -6,12 +6,14 @@
 #include "Scoreboards.h"
 #include "ConfigureRTC.h"
 #include "ButtonBoard.h"
+#include "Buzzer.h"
 
 void setup()
 {
   Serial.begin(115200);
   ConfigureRTC();
   initialize_OLED();
+  initialize_buzzer();
   initialize_rotary_encoder();
   initialize_scoreboards();
   initialize_button_board();

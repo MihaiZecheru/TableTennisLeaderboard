@@ -8,6 +8,7 @@
 #include "Players.h"
 #include "OLED.h"
 #include "Scoreboards.h"
+#include "Buzzer.h"
 
 #define MAX_POINTS 100
 
@@ -89,14 +90,25 @@ private:
    * 
    * Note: this function is called every time a point is added
    */
-  void change_server_if_necessary()
+  bool change_server_if_necessary()
   {
     if (in_deuce() || set_length == 6) // Server changes every point during deuce and when playing first to 6
+    {
       __change_server();
+      return true;
+    }
     else if (set_length == 21 && point_count % 5 == 0)
+    {
       __change_server();
+      return true;
+    }
     else if (set_length == 11 && point_count % 2 == 0)
+    {
       __change_server();
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -141,10 +153,23 @@ public:
     this->point_history[this->point_count++] = {this->player_serving, 1}; // 1 is p1
     
     // Will change_server only if it's time to
-    change_server_if_necessary();
+    bool server_changed = change_server_if_necessary();
+
     // Update OLED & scoreboards
     this->ShowServeInfoMessage();
     this->UpdateScoreboards();
+
+    // Beep the buzzer--once normally, twice if the server changed
+    if (server_changed)
+    {
+      // Long beep to indicate serve change
+      PlayP1Tone(2); // 2 is the beep mode
+    }
+    else
+    {
+      // Short beep to indicate that a point was added
+      PlayP1Tone(1); // 1 is the beep mode
+    }
   }
 
   /**
@@ -158,10 +183,23 @@ public:
     this->point_history[this->point_count++] = {this->player_serving, 2}; // 2 is p2
 
     // Will change_server only if it's time to
-    change_server_if_necessary();
+    bool server_changed = change_server_if_necessary();
+
     // Update OLED & scoreboards
     this->ShowServeInfoMessage();
     this->UpdateScoreboards();
+
+    // Beep the buzzer--once normally, twice if the server changed
+    if (server_changed)
+    {
+      // Long beep to indicate serve change
+      PlayP2Tone(2); // 2 is the beep mode
+    }
+    else
+    {
+      // Short beep to indicate that a point was added
+      PlayP2Tone(1); // 1 is the beep mode
+    }
   }
 
   void UpdateScoreboards()
@@ -182,7 +220,6 @@ public:
   {
     if (this->point_count == 0) return;
     PointRecord point = this->point_history[this->point_count - 1];
-    this->point_history[point_count] = {}; // Zero out the last record
     this->point_count--;
 
     // Undo score awarded from last point
@@ -209,6 +246,7 @@ public:
 
     UpdateScoreboards();
     this->ShowServeInfoMessage();
+    PlayUndoPointBeep(point.player_who_won);
   }
 
   const Player* GetWinner()
