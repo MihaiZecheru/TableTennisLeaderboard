@@ -4,6 +4,8 @@
 #include "OLED.h"
 #include "ButtonBoard.h"
 
+#define HOLD_BUTTON_REQUIRED_DURATION_MS 2000
+
 /**
  * Listens for P1's button presses and updates the TM1637 scoreboard displays in response
  * until one of the players has won.
@@ -31,14 +33,14 @@ bool MidGamePhase(Game* game)
       game->AddPointToP2();
     }
 
+    // Press to UndoPoint and hold to reset the game
     if (UndoPointButtonPressed())
     {
       uint64_t press_start = millis();
       delay(100);
-      while (UndoPointButtonPressed());
-      uint64_t press_duration = millis() - press_start;
+      while (UndoPointButtonPressed() && millis() - press_start < HOLD_BUTTON_REQUIRED_DURATION_MS);
 
-      if (press_duration >= 3000)
+      if (millis() - press_start >= HOLD_BUTTON_REQUIRED_DURATION_MS)
       {
         return true; // loop() will receive this 'true' value and return, skipping the EndGamePhase and going back to the start of the loop
       }
