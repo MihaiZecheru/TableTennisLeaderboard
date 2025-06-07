@@ -44,7 +44,7 @@ bool UndoPointButtonPressed()
  */
 bool ResetGameButtonPressed()
 {
-  return false;
+  return false; // The black button has some sort of issue. Most not be wired properly. Returning false will just disable it.
   // return digitalRead(K1) == LOW;
 }
 
