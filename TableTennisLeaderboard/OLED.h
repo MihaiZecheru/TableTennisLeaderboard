@@ -18,7 +18,9 @@ void initialize_OLED()
   display.setFont();
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
-  display.print(" Ping Pong");
+  display.print("Play");
+  display.setCursor(0, 16);
+  display.print("Ping Pong");
   display.display();
 }
 
@@ -176,6 +178,14 @@ void ShowSubmittedMessage()
   display.clearDisplay();
   display.setCursor(0, 0);
   display.print("Submitted.");
+  display.display();
+}
+
+void ShowGameOnMessage()
+{
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("Game on!");
   display.display();
 }
 
