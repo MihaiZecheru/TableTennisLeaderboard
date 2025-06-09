@@ -24,6 +24,8 @@ Game* PreGamePhase()
   const Player& p2 = SelectPlayer(2, p1.id);
   uint8_t first_server = SelectServer(p1.name, p2.name);
 
+  ShowGameOnMessage();
+  delay(1000);
   ClearOLED();
 
   // Make game object with given data

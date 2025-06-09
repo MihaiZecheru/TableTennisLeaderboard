@@ -4,7 +4,7 @@
 #include <TM1637Display.h>
 
 // Set brightness (0 = dim, 7 = bright)
-#define SCORE_DISPLAY_BRIGHTNESS 5
+#define SCORE_DISPLAY_BRIGHTNESS 1
 // Used in the showNumberDecEx func for turning on the colon
 #define COLON_BYTE 0b01000000
 

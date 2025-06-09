@@ -9,6 +9,7 @@
 void ConfigureRTC()
 {
   Serial.println("Connecting to wifi for RTC sync...");
+  WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -40,7 +41,7 @@ void ConfigureRTC()
     Serial.println("Time synced (UTC): " + String(ctime(&now)));
   }
 
-  WiFi.disconnect(true);
+  // WiFi.disconnect(true);
 }
 
 #endif

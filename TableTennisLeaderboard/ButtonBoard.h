@@ -11,7 +11,8 @@ void initialize_button_board()
   pinMode(K1, INPUT_PULLUP);
   pinMode(K2, INPUT_PULLUP);
   pinMode(K3, INPUT_PULLUP);
-  pinMode(K4, INPUT_PULLUP);
+  // K4 must have a solder connection issue; it appears to not be properly connected
+  // pinMode(K4, INPUT_PULLUP);
 }
 
 /**
@@ -19,7 +20,7 @@ void initialize_button_board()
  */
 bool P1ButtonPressed()
 {
-  return digitalRead(K1) == LOW;
+  return digitalRead(K3) == LOW;
 }
 
 /**
@@ -35,7 +36,7 @@ bool P2ButtonPressed()
  */
 bool UndoPointButtonPressed()
 {
-  return digitalRead(K3) == LOW;
+  return digitalRead(K1) == LOW;
 }
 
 /**
@@ -43,7 +44,8 @@ bool UndoPointButtonPressed()
  */
 bool ResetGameButtonPressed()
 {
-  return digitalRead(K4) == LOW;
+  return false; // The black button has some sort of issue. Most not be wired properly. Returning false will just disable it.
+  // return digitalRead(K1) == LOW;
 }
 
 #endif
