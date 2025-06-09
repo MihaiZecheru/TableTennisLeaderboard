@@ -21,6 +21,13 @@ app.get('/', async (req, res) => {
   res.render('recent_games', { games, players, UtcToPst, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
 });
 
+function get_symbol(leaderboard_placement) {
+  if (leaderboard_placement === 1) return '<span class="lg-emoji">🥇</span>';
+  if (leaderboard_placement === 2) return '🥈';
+  if (leaderboard_placement === 3) return '🥉';
+  return leaderboard_placement;
+}
+
 /**
  * Player leaderboard. Ranked by win ratio
  */
@@ -33,7 +40,7 @@ app.get('/leaderboard', async (req, res) => {
     return b_wr - a_wr;
   });
 
-  res.render('leaderboard', { players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
+  res.render('leaderboard', { players, get_symbol, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
 });
 
 /**

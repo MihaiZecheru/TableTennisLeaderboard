@@ -19,19 +19,24 @@
 
   <main class="purple-bg">
     <div class="centered-table-container" style="margin-top: calc(11rem); height: calc(100vh - 11rem);">
-      <div style="width: 20vw;">
+      <div>
         <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
           <tbody>
             <% players.forEach((player, index) => { %>
               <tr>
-                <td><h2><%= index + 1 %></h2></td>
-                <td><h2><%= gpn(player.id) %> (<%= player.elo %>)</h2></td>
+                <% if (index === 0) { %>
+                  <td class="leaderboard-first-place leaderboard-placement-display"><h1>🥇</h1></td>
+                  <td class="leaderboard-p-name"><h1 class="p-name-redirect" title="Go to player stats page" data-player-id="<%= player.id %>"><%= gpn(player.id) %></h1><h2 title="<%= gpn(player.id) %>'s Elo Rating">(<%= player.elo %>)</h2></td>
+                <% } else if (index === 1) { %>
+                  <td class="leaderboard-second-place leaderboard-placement-display"><h1>🥈</h1></td>
+                  <td class="leaderboard-p-name"><h1 class="p-name-redirect" title="Go to player stats page" data-player-id="<%= player.id %>"><%= gpn(player.id) %></h1><h2 title="<%= gpn(player.id) %>'s Elo Rating">(<%= player.elo %>)</h2></td>
+                <% } else if (index === 2) { %>
+                  <td class="leaderboard-third-place leaderboard-placement-display"><h1>🥉</h1></td>
+                  <td class="leaderboard-p-name"><h1 class="p-name-redirect" title="Go to player stats page" data-player-id="<%= player.id %>"><%= gpn(player.id) %></h1><h2 title="<%= gpn(player.id) %>'s Elo Rating">(<%= player.elo %>)</h2></td>
+                <% } else { %>
+                  <td class="leaderboard-other-places leaderboard-placement-display"><h2>#<%= index + 1 %></h2></td>
+                  <td class="leaderboard-p-name"><h2 class="p-name-redirect" title="Go to player stats page" data-player-id="<%= player.id %>"><%= gpn(player.id) %></h2><h3 title="<%= gpn(player.id) %>'s Elo Rating">(<%= player.elo %>)</h3></td>
+                <% } %>
               </tr>
             <% }) %>
         </table>
@@ -46,6 +51,13 @@
 
     document.querySelector('.redirect-btn-home').addEventListener('click', () => {
       window.location.href = '/';
+    });
+
+    document.querySelectorAll(".p-name-redirect").forEach((ele) => {
+      ele.addEventListener("click", () => {
+        const playerId = ele.getAttribute("data-player-id");
+        window.location.href = `/player/${playerId}`;
+      });
     });
   </script>
 
