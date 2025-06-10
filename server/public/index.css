@@ -269,8 +269,12 @@ body, main {
 
 .centered-table-container tr {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+}
+
+.leaderboard-table tr {
+  display: flex;
+  align-items: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -344,11 +348,19 @@ body, main {
   width: 6rem;
 }
 
-.leaderboard-p-name > h1{
+.leaderboard-p-name > h1 {
   text-decoration: underline;;
 }
 
 .leaderboard-other-places {
   display: flex;
   align-items: center;
+}
+
+.leaderboard-table tr:first-child {
+  margin-top: 1rem;
+}
+
+.leaderboard-table tr:last-child {
+  margin-bottom: 1rem;
 }
