@@ -108,7 +108,7 @@ app.post('/api/upload-set', async (req, res) => {
 
   const p1_elo_before_match = await GetPlayerElo(p1_id);
   const p2_elo_before_match = await GetPlayerElo(p2_id);
-  const { p1_elo_change, p2_elo_change } = CalculateNewElo(p1_elo_before_match, p2_elo_before_match, point_history);
+  const { p1_elo_change, p2_elo_change } = CalculateNewElo(p1_elo_before_match, p2_elo_before_match, set_length, point_history);
   const p1_new_elo = p1_elo_before_match + p1_elo_change;
   const p2_new_elo = p2_elo_before_match + p2_elo_change;
 
