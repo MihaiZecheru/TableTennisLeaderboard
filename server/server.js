@@ -1,6 +1,8 @@
 import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst, GetPlayerElo, UpdatePlayerStats } from './database_functions.js';
 import { CalculateNewElo } from './calculate_new_elo.js';
+import LiveScoreWebSocket from './LiveScoreWebSocket.js';
 import express from 'express';
+import express_ws from 'express-ws';
 
 const PORT = 4010;
 const app = express();
@@ -8,6 +10,7 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static('public'));
+express_ws(app);
 
 /**
  * View game history. All the past games are displayed.
@@ -120,6 +123,15 @@ app.post('/api/upload-set', async (req, res) => {
   } else {
     res.status(400).send('ERR');
   }
+});
+
+app.ws('/api/live-score', (ws, req) => LiveScoreWebSocket(ws, req));
+
+app.get('/live-score', (req, res) => {
+  // The page will connect to the live-score WebSocket through the browser
+  // and modify the page via the <script> tag once connected.
+  // The page will update dynamically; the <script> tag will handle the WebSocket connection.
+  res.render('live_score');
 });
 
 app.listen(PORT, () => {

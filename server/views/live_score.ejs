@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Tennis</title>
+  <link rel="stylesheet" href="/index.css">
+  <link rel="icon" href="/table_tennis_racket.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  
+  <div class="live-score-display-container">
+
+    <div class="live-score-p1-display">
+      <span class="live-score-p1-score"></span>
+    </div>
+    <div class="live-score-p2-display">
+      <span class="live-score-p2-score"></span>
+    </div>
+
+  </div>
+
+  <script>
+    function SetNotConnected() {
+      p1_ele.textContent = '–';
+      p2_ele.textContent = '–';
+      document.title = 'Not Connected';
+    }
+
+    const p1_ele = document.querySelector('.live-score-p1-score');
+    const p2_ele = document.querySelector('.live-score-p2-score');
+    let p1_score = 0;
+    let p2_score = 0;
+    SetNotConnected();
+    
+    function UpdateScores() {
+      p1_ele.textContent = p1_score;
+      p2_ele.textContent = p2_score;
+    }
+
+    const socket = new WebSocket('ws://localhost:4010/api/live-score?client=Web');
+
+    socket.onopen = () => {
+      console.log('WebSocket connected');
+    };
+
+    socket.onmessage = (event) => {
+      let data = event.data;
+
+      // Try parsing JSON if it looks like an object
+      if (typeof data === 'string' && data.trim().startsWith('{')) {
+        try {
+          data = JSON.parse(data);
+        } catch (err) {
+          console.error("Failed to parse JSON:", err);
+          return;
+        }
+      }
+
+      if (typeof data === 'object' && data.p1_score !== undefined && data.p2_score !== undefined && data.p1_name !== undefined && data.p2_name !== undefined) {
+        document.title = `${data.p1_name} vs ${data.p2_name}`;
+        p1_score = data.p1_score;
+        p2_score = data.p2_score;
+        UpdateScores();
+      } else if (data === 'p1+1') {
+        p1_score += 1;
+        UpdateScores();
+      } else if (data === 'p2+1') {
+        p2_score += 1;
+        UpdateScores();
+      } else if (data === 'p1-1') {
+        p1_score -= 1;
+        UpdateScores();
+      } else if (data === 'p2-1') {
+        p2_score -= 1;
+        UpdateScores();
+      } else if (data === 'reset') {
+        p1_score = 0;
+        p2_score = 0;
+        UpdateScores();
+      } else if (data === 'ESP32 client disconnected') {
+        console.log('ESP32 client disconnected');
+        SetNotConnected();
+        p1_score = 0;
+        p2_score = 0;
+        // Do not call UpdateScores here, as SetNotConnected already updates the display to be empty
+      } else {
+        console.error('Unexpected data format:', data);
+      }
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket disconnected');
+      SetNotConnected();
+      p1_score = 0;
+      p2_score = 0;
+      // Do not call UpdateScores here, as SetNotConnected already updates the display to be empty
+    };
+  </script>
+
+</body>
+</html>

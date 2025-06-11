@@ -364,3 +364,40 @@ body, main {
 .leaderboard-table tr:last-child {
   margin-bottom: 1rem;
 }
+
+.live-score-display-container {
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.live-score-p1-display,
+.live-score-p2-display {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Comfortaa';
+}
+
+.live-score-p1-display {
+  background-color: var(--cool-blue);
+}
+
+.live-score-p2-display {
+  background-color: var(--cool-purple);
+}
+
+.live-score-p1-display > span,
+.live-score-p2-display > span {
+  font-size: 12.5rem;
+  font-weight: bold;
+  color: var(--light-gray);
+  margin: 0;
+  padding: 0;
+}
