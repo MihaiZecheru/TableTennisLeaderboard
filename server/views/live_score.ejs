@@ -38,7 +38,7 @@
       p2_ele.textContent = p2_score;
     }
 
-    const socket = new WebSocket('ws://localhost:4010/api/live-score?client=Web');
+    const socket = new WebSocket('wss://ping-pong.mzecheru.com/api/live-score?client=Web');
 
     socket.onopen = () => {
       console.log('WebSocket connected');
