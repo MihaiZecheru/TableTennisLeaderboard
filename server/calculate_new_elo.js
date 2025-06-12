@@ -30,25 +30,25 @@ function _calculate_new_elo_helper(winner_rating, loser_rating, k = 32) {
 
 /**
  * Calculate both p1 and p2's new ELO ratings based on the outcome of the match and their ELO ratings before the match.
- * @param {} p1_elo_before The ELO rating of player 1 before the match
- * @param {*} p2_elo_before The ELO rating of player 2 before the match
+ * @param {number} p1_elo_before The ELO rating of player 1 before the match
+ * @param {number} p2_elo_before The ELO rating of player 2 before the match
  * @param {number} set_length The length of the set (6, 11, or 21). Used to calculate the K-factor.
  * @param {*} point_history Used to determine the winner of the match
- * @returns { p1_elo_change, p2_elo_change } dictionary containing the change in ELO rating for each player (ie: -5, +7, etc)
+ * @returns {{ p1_elo_change, p2_elo_change }} dictionary containing the change in ELO rating for each player (ie: -5, +7, etc)
  */
 export function CalculateNewElo(p1_elo_before, p2_elo_before, set_length, point_history) {
   // Calculate the new ELO ratings for each of the players as a result of the match
   const winner = determine_winner(point_history); // string 'p1' or 'p2'
 
-  // Determine ELO multiplier based on set length
+  // Determine ELO multiplier (k) based on set length
   // When playing to 21, k=32. When playing to 11, k=24. When playing to 6, k=16.
   let k;
   if (set_length === 6) {
-    multiplier = 16; // 0.5 of default K-factor for short sets (short sets are more volatile)
+    k = 16; // 0.5 of default K-factor for short sets (short sets are more volatile)
   } else if (set_length === 11) {
-    multiplier = 24; // 0.75 of default K-factor for medium sets
+    k = 24; // 0.75 of default K-factor for medium sets
   } else if (set_length === 21) {
-    multiplier = 32; // Default K-factor for longer sets
+    k = 32; // Default K-factor for longer sets
   } else {
     throw new Error(`Invalid set_length: ${set_length}. Must be one of 6, 11, or 21.`);
   }
@@ -62,6 +62,8 @@ export function CalculateNewElo(p1_elo_before, p2_elo_before, set_length, point_
     const { new_winner_rating, new_loser_rating } = _calculate_new_elo_helper(p2_elo_before, p1_elo_before, k);
     new_p1_elo = new_loser_rating;
     new_p2_elo = new_winner_rating;
+  } else {
+    throw new Error(`Invalid winner: ${winner}. Must be one of 'p1' or 'p2'.`);
   }
 
   const p1_elo_change = new_p1_elo - p1_elo_before;
