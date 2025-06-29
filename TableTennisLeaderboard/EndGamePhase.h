@@ -13,6 +13,8 @@
  * over wifi to the scoreboard server
  */
 void EndGamePhase(Game* game) {
+  CloseWebsocket();
+
   // Flash scoreboards & show Uploading scores message simultaneously
   for (uint8_t i = 0; i < 4; i++)
   {

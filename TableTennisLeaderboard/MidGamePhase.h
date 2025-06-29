@@ -3,6 +3,7 @@
 
 #include "OLED.h"
 #include "ButtonBoard.h"
+#include "WebSocket.h"
 
 #define HOLD_BUTTON_REQUIRED_DURATION_MS 2000
 
@@ -19,11 +20,14 @@ bool MidGamePhase(Game* game)
 
   while (!game->CheckForWin())
   {
+    PollWebsocket();
+
     if (P1ButtonPressed())
     {
       delay(100);
       while (P1ButtonPressed());
       game->AddPointToP1();
+      SendWebsocketMessage_IncrementP1Score();
     }
 
     if (P2ButtonPressed())
@@ -31,6 +35,7 @@ bool MidGamePhase(Game* game)
       delay(100);
       while (P2ButtonPressed());
       game->AddPointToP2();
+      SendWebsocketMessage_IncrementP2Score();
     }
 
     // Press to UndoPoint and hold to reset the game
@@ -42,21 +47,16 @@ bool MidGamePhase(Game* game)
 
       if (millis() - press_start >= HOLD_BUTTON_REQUIRED_DURATION_MS)
       {
+        SendWebsocketMessage_ResetGame();
+        CloseWebsocket();
         return true; // loop() will receive this 'true' value and return, skipping the EndGamePhase and going back to the start of the loop
       }
       else
       {
+        // Websocket msg is sent within the below function
         game->UndoLastPoint();
       }
     }
-
-    // NOTE: button disabled due to connection issue
-    // if (ResetGameButtonPressed())
-    // {
-    //   delay(100);
-    //   while (ResetGameButtonPressed());
-    //   return true; // loop() will receive this 'true' value and return, skipping the EndGamePhase and going back to the start of the loop
-    // }
   }
 
   return false;

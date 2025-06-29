@@ -9,6 +9,7 @@
 #include "OLED.h"
 #include "Scoreboards.h"
 #include "Buzzer.h"
+#include "WebSocket.h"
 
 #define MAX_POINTS 100
 
@@ -227,11 +228,13 @@ public:
     {
       // Player 1 won the last point (that is being undone), so decrement his score
       this->p1_score--;
+      SendWebsocketMessage_DecrementP1Score();
     }
     else if (point.player_who_won == 2)
     {
       // Player 2 won the last point (that is being undone), so decrement his score
       this->p2_score--;
+      SendWebsocketMessage_DecrementP2Score();
     }
 
     // Set server to the last server

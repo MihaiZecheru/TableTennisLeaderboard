@@ -5,9 +5,11 @@
 #include "RotaryEncoder.h"
 #include "OLED.h"
 #include "Players.h"
+#include "ButtonBoard.h"
+#include "WebSocket.h"
 
 uint8_t SelectSetLength();
-const Player& SelectPlayer(uint8_t player_num, int8_t banned_id = -1);
+const Player* SelectPlayer(uint8_t player_num, int8_t banned_id = -1);
 uint8_t SelectServer(const char* p1_name, const char* p2_name);
 
 /**
@@ -19,17 +21,28 @@ uint8_t SelectServer(const char* p1_name, const char* p2_name);
 Game* PreGamePhase()
 {
   // Have p1 setup game using OLED and dial
+  // There is no goto for undoing / going back since this is the first prompt the user is faced with
+  select_set_length_label:;
   uint8_t set_length = SelectSetLength(); // 6, 11, or 21
-  const Player& p1 = SelectPlayer(1);
-  const Player& p2 = SelectPlayer(2, p1.id);
-  uint8_t first_server = SelectServer(p1.name, p2.name);
 
+  select_p1_label:;
+  const Player* p1 = SelectPlayer(1);
+  if (p1 == nullptr) goto select_set_length_label;
+
+  select_p2_label:;
+  const Player* p2 = SelectPlayer(2, p1->id);
+  if (p2 == nullptr) goto select_p1_label;
+
+  uint8_t first_server = SelectServer(p1->name, p2->name); // Returns 1 or 2, or 0 if undo btn clicked
+  if (first_server == 0) goto select_p2_label; // SelectServer() returns 0 as a NULL value when the white btn is clicked
+
+  StartWebSocket(p1->name, p2->name);
   ShowGameOnMessage();
   delay(1000);
   ClearOLED();
 
   // Make game object with given data
-  Game* game = new Game(set_length, p1, p2, first_server);
+  Game* game = new Game(set_length, *p1, *p2, first_server);
   return game;
 }
 
@@ -81,14 +94,14 @@ uint8_t SelectSetLength()
 
     last_clk = clk_state;
 
-    if (rotary_encoder_btn_pressed())
+    if (rotary_encoder_btn_pressed() || P1ButtonPressed())
     {
       delay(200); // Crude debounce
-      while (rotary_encoder_btn_pressed()); // wait for release
+      while (rotary_encoder_btn_pressed() || P1ButtonPressed()); // wait for release
       return set_lengths[index];
     }
 
-    delay(1);
+    delay(10);
   }
 }
 
@@ -98,7 +111,7 @@ uint8_t SelectSetLength()
  * @param banned_id Default -1. The ID of the player who cannot be selected. Used for when the p1 has already been selected; when choosing p2, it will not be the same as p1 because of this arg
  * @returns The ID of the selected player
  */
-const Player& SelectPlayer(uint8_t player_num, int8_t banned_id)
+const Player* SelectPlayer(uint8_t player_num, int8_t banned_id)
 {
   int8_t index = 0; // not uint8_t because it can go to -1 before being clamped (set back to 0)
   int8_t prev_index = 0;
@@ -115,6 +128,14 @@ const Player& SelectPlayer(uint8_t player_num, int8_t banned_id)
   // Loop until player 1 clicks the button on the KY-040 rotary encoder (clicks the dial)
   while (true)
   {
+    if (UndoPointButtonPressed())
+    {
+      delay(100);
+      while (UndoPointButtonPressed());
+      return nullptr; // This will be received in the PreGamePhase function, which will cause the goto statement to trigger,
+      // effectively undoing the point.
+    }
+
     bool clk_state = rotary_encoder_read_clk();
 
     // Check for rotation
@@ -157,19 +178,19 @@ const Player& SelectPlayer(uint8_t player_num, int8_t banned_id)
         prev_index = index;
       }
 
-      delay(50);
+      delay(25);
     }
 
     last_clk = clk_state;
 
-    if (rotary_encoder_btn_pressed())
+    if (rotary_encoder_btn_pressed() || P1ButtonPressed())
     {
       delay(200); // Crude debounce
-      while (rotary_encoder_btn_pressed()); // wait for release
-      return ALL_SAVED_PLAYERS[index];
+      while (rotary_encoder_btn_pressed() || P1ButtonPressed()); // wait for release
+      return &ALL_SAVED_PLAYERS[index];
     }
 
-    delay(1);
+    delay(10);
   }
 }
 
@@ -184,6 +205,14 @@ uint8_t SelectServer(const char* p1_name, const char* p2_name)
   // Loop until player 1 clicks the button on the KY-040 rotary encoder (clicks the dial)
   while (true)
   {
+    if (UndoPointButtonPressed())
+    {
+      delay(100);
+      while (UndoPointButtonPressed());
+      return 0; // Null value is 0. (Player IDs start at 10). This will be received in the PreGamePhase function, which will cause the goto statement to trigger,
+      // effectively undoing the point.
+    }
+
     bool clk_state = rotary_encoder_read_clk();
 
     // Check for rotation
@@ -212,19 +241,19 @@ uint8_t SelectServer(const char* p1_name, const char* p2_name)
         prev_player_num = player_num;
       }
 
-      delay(50);
+      delay(25);
     }
 
     last_clk = clk_state;
 
-    if (rotary_encoder_btn_pressed())
+    if (rotary_encoder_btn_pressed() || P1ButtonPressed())
     {
       delay(200); // Crude debounce
-      while (rotary_encoder_btn_pressed()); // wait for release
+      while (rotary_encoder_btn_pressed() || P1ButtonPressed()); // wait for release
       return player_num;
     }
 
-    delay(1);
+    delay(10);
   }
 }
 
