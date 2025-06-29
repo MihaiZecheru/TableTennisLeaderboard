@@ -27,7 +27,6 @@ bool MidGamePhase(Game* game)
       delay(100);
       while (P1ButtonPressed());
       game->AddPointToP1();
-      SendWebsocketMessage_IncrementP1Score();
     }
 
     if (P2ButtonPressed())
@@ -35,7 +34,6 @@ bool MidGamePhase(Game* game)
       delay(100);
       while (P2ButtonPressed());
       game->AddPointToP2();
-      SendWebsocketMessage_IncrementP2Score();
     }
 
     // Press to UndoPoint and hold to reset the game

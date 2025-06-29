@@ -9,7 +9,7 @@ using namespace websockets;
 WebsocketsClient socket;
 bool websocket_initialized = false;
 
-void StartWebSocket(const char* p1_name, const char* p2_name) {
+void StartWebSocket(const char* p1_name, const char* p2_name, const uint8_t first_server) {
   Serial.println("START OF WEBSOCKET FUNC");
   if (!websocket_initialized)
   {
@@ -32,7 +32,7 @@ void StartWebSocket(const char* p1_name, const char* p2_name) {
   }
 
   String ws_url = String(WEBSOCKET_LIVE_SCORE_URL) + "?client=ESP32&p1_name=" +
-    p1_name + "&p2_name=" + p2_name;
+    p1_name + "&p2_name=" + p2_name + "&first_server=" + first_server;
   Serial.println("right before connection");
   socket.connect(ws_url);
   Serial.println("Websocket connected");
@@ -64,24 +64,28 @@ void _send_websocket_message(const String &message)
   }
 }
 
-void SendWebsocketMessage_IncrementP1Score()
+void SendWebsocketMessage_IncrementP1Score(uint8_t current_server)
 {
-  _send_websocket_message("p1+1");
+  String msg = String("p1+1") + String(current_server);
+  _send_websocket_message(msg);
 }
 
-void SendWebsocketMessage_IncrementP2Score()
+void SendWebsocketMessage_IncrementP2Score(uint8_t current_server)
 {
-  _send_websocket_message("p2+1");
+  String msg = String("p2+1") + String(current_server);
+  _send_websocket_message(msg);
 }
 
-void SendWebsocketMessage_DecrementP1Score()
+void SendWebsocketMessage_DecrementP1Score(uint8_t current_server)
 {
-  _send_websocket_message("p1-1");
+  String msg = String("p1-1") + String(current_server);
+  _send_websocket_message(msg);
 }
 
-void SendWebsocketMessage_DecrementP2Score()
+void SendWebsocketMessage_DecrementP2Score(uint8_t current_server)
 {
-  _send_websocket_message("p2-1");
+  String msg = String("p2-1") + String(current_server);
+  _send_websocket_message(msg);
 }
 
 void SendWebsocketMessage_ResetGame()

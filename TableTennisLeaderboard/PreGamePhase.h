@@ -36,7 +36,7 @@ Game* PreGamePhase()
   uint8_t first_server = SelectServer(p1->name, p2->name); // Returns 1 or 2, or 0 if undo btn clicked
   if (first_server == 0) goto select_p2_label; // SelectServer() returns 0 as a NULL value when the white btn is clicked
 
-  StartWebSocket(p1->name, p2->name);
+  StartWebSocket(p1->name, p2->name, first_server);
   ShowGameOnMessage();
   delay(1000);
   ClearOLED();

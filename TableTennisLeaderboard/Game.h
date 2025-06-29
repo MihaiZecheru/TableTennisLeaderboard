@@ -160,6 +160,10 @@ public:
     this->ShowServeInfoMessage();
     this->UpdateScoreboards();
 
+    // Notify wss
+    SendWebsocketMessage_IncrementP1Score(this->player_serving);
+
+
     // Beep the buzzer--once normally, twice if the server changed
     if (server_changed)
     {
@@ -189,6 +193,10 @@ public:
     // Update OLED & scoreboards
     this->ShowServeInfoMessage();
     this->UpdateScoreboards();
+
+    // Notify wss
+    SendWebsocketMessage_IncrementP2Score(this->player_serving);
+
 
     // Beep the buzzer--once normally, twice if the server changed
     if (server_changed)
@@ -228,13 +236,13 @@ public:
     {
       // Player 1 won the last point (that is being undone), so decrement his score
       this->p1_score--;
-      SendWebsocketMessage_DecrementP1Score();
+      SendWebsocketMessage_DecrementP1Score(this->player_serving);
     }
     else if (point.player_who_won == 2)
     {
       // Player 2 won the last point (that is being undone), so decrement his score
       this->p2_score--;
-      SendWebsocketMessage_DecrementP2Score();
+      SendWebsocketMessage_DecrementP2Score(this->player_serving);
     }
 
     // Set server to the last server
