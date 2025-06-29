@@ -15,6 +15,23 @@
 #define CLK_SPEC 16
 #define DIO_SPEC 4
 
+const uint8_t SEG_SPACE = 0x00;
+const uint8_t SEG_0 = 0x3F;
+const uint8_t SEG_1 = 0x06;
+const uint8_t SEG_2 = 0x5B;
+const uint8_t SEG_3 = 0x4F;
+const uint8_t SEG_4 = 0x66;
+const uint8_t SEG_5 = 0x6D;
+const uint8_t SEG_6 = 0x7D;
+const uint8_t SEG_7 = 0x07;
+const uint8_t SEG_8 = 0x7F;
+const uint8_t SEG_9 = 0x6F;
+
+uint8_t digitToSegment(uint8_t digit) {
+  const uint8_t segs[] = {SEG_0, SEG_1, SEG_2, SEG_3, SEG_4, SEG_5, SEG_6, SEG_7, SEG_8, SEG_9};
+  return (digit < 10) ? segs[digit] : SEG_SPACE;
+}
+
 TM1637Display p1_scoreboard(CLK_P1, DIO_P1);
 TM1637Display p2_scoreboard(CLK_P2, DIO_P2);
 TM1637Display spectator_scoreboard(CLK_SPEC, DIO_SPEC);
@@ -41,19 +58,26 @@ void initialize_scoreboards() {
  * P1 score is first, then P2. Format is "P1:P2"
  */
 void _update_scoreboards(uint8_t p1_score, uint8_t p2_score) {
-  // Possible with long deuce (though unlikely)
+  // Clamp values
   if (p1_score > 99) p1_score = 99;
   if (p2_score > 99) p2_score = 99;
 
-  // Will turn a score of 17 and 15 into 1715
-  // Format: [P1][P2], e.g. "1715"
-  // Used because individual digits can't be set; the showNumberDecEx func is used instead to write one number
-  uint16_t combined_number = (p1_score * 100) + p2_score;
+  // Extract digits
+  uint8_t p1_tens = (p1_score >= 10) ? (p1_score / 10) : 0;
+  uint8_t p1_ones = p1_score % 10;
+  uint8_t p2_tens = (p2_score >= 10) ? (p2_score / 10) : 0;
+  uint8_t p2_ones = p2_score % 10;
 
-  // Write to all three with colon on and leading zeros = true
-  p1_scoreboard.showNumberDecEx(combined_number, COLON_BYTE, true);
-  p2_scoreboard.showNumberDecEx(combined_number, COLON_BYTE, true);
-  spectator_scoreboard.showNumberDecEx(combined_number, COLON_BYTE, true);
+  // Compose segments
+  uint8_t segments[4];
+  segments[0] = (p1_score >= 10) ? digitToSegment(p1_tens) : SEG_SPACE;
+  segments[1] = (p2_score >= 10) ? digitToSegment(p1_ones) | 0b10000000 : digitToSegment(p1_ones);
+  segments[2] = (p2_score >= 10) ? digitToSegment(p2_tens) : SEG_SPACE;  // Colon on
+  segments[3] = digitToSegment(p2_ones);
+
+  p1_scoreboard.setSegments(segments);
+  p2_scoreboard.setSegments(segments);
+  spectator_scoreboard.setSegments(segments);
 }
 
 #endif
