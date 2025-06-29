@@ -69,22 +69,22 @@
         p2_score = data.p2_score;
 		current_server = data.first_server;
         UpdateScores();
-      } else if (data === 'p1+1') {
+      } else if (typeof data === 'string' && data.startsWith('p1+1')) {
         p1_score += 1;
         UpdateScores();
-      } else if (data === 'p2+1') {
+      } else if (typeof data === 'string' && data.startsWith('p2+1')) {
         p2_score += 1;
         UpdateScores();
-      } else if (data === 'p1-1') {
+      } else if (typeof data === 'string' && data.startsWith('p1-1')) {
         p1_score -= 1;
         UpdateScores();
-      } else if (data === 'p2-1') {
+      } else if (typeof data === 'string' && data.startsWith('p2-1')) {
         p2_score -= 1;
         UpdateScores();
       } else if (data === 'reset') {
         p1_score = 0;
         p2_score = 0;
-		current_server = 0;
+        current_server = 0;
         UpdateScores();
       } else if (data === 'ESP32 client disconnected') {
         console.log('ESP32 client disconnected');
