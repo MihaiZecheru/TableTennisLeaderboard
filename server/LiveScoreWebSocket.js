@@ -26,7 +26,7 @@ function HandleESP32ClientConnected(ws, req) {
   
   // If the Web client is already connected, send the initial data to it (this is for sending the names mostly; the score should be 0-0 when the ESP32 connects).
   if (ws_connections['Web']) {
-    ws_connections['Web'].send(JSON.stringify({ p1_name: ws_data['p1_name'], p2_name: ws_data['p2_name'], p1_score: ws_data['p1_score'], p2_score: ws_data['p2_score'] }));
+    ws_connections['Web'].send(JSON.stringify({ p1_name: ws_data['p1_name'], p2_name: ws_data['p2_name'], p1_score: ws_data['p1_score'], p2_score: ws_data['p2_score'], first_server: ws_Data['first_server'] }));
   }
 
   ws.on('close', () => {
@@ -44,7 +44,7 @@ function HandleWebClientConnected(ws) {
   // The Web client will receive the initial data from the ESP32 client if the ESP32 client is already connected.
   // If the ESP32 client is not connected, the data will be sent once the ESP32 client connects.
   if (ws_connections['ESP32']) {
-    ws.send(JSON.stringify({ p1_name: ws_data['p1_name'], p2_name: ws_data['p2_name'], p1_score: ws_data['p1_score'], p2_score: ws_data['p2_score'] }));
+    ws.send(JSON.stringify({ p1_name: ws_data['p1_name'], p2_name: ws_data['p2_name'], p1_score: ws_data['p1_score'], p2_score: ws_data['p2_score'], first_server: ws_Data['first_server'] }));
   }
   
   ws.on('close', () => {
