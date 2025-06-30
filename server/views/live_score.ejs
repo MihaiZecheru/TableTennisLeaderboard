@@ -31,17 +31,12 @@
     const p2_ele = document.querySelector('.live-score-p2-score');
     let p1_score = 0;
     let p2_score = 0;
-	let current_server = 0;
+    let current_server = 0;
     SetNotConnected();
-	
-	function GetCurrentServer() {
-		const total_score = p1_score + p2_score;
-		
-	}
     
     function UpdateScores() {
-      p1_ele.textContent = (current_server == 1 ? '*' : '') + p1_score;
-      p2_ele.textContent = (current_server == 2 ? '*' : '') + p2_score;
+      p1_ele.textContent = (current_server == 1 ? '•' : '') + p1_score;
+      p2_ele.textContent = p2_score + (current_server == 2 ? '•' : '');
     }
 
     const socket = new WebSocket('wss://ping-pong.mzecheru.com/api/live-score?client=Web');
@@ -63,23 +58,27 @@
         }
       }
 
-      if (typeof data === 'object' && data.p1_score !== undefined && data.p2_score !== undefined && data.p1_name !== undefined && data.p2_name !== undefined && data.first_server !== undefined) {
+      if (typeof data === 'object' && data.p1_score !== undefined && data.p2_score !== undefined && data.p1_name !== undefined && data.p2_name !== undefined && data.current_server !== undefined) {
         document.title = `${data.p1_name} vs ${data.p2_name}`;
         p1_score = data.p1_score;
-        p2_score = data.p2_score;
-		current_server = data.first_server;
+        p2_score = data.p2_score
+        current_server = data.current_server;
         UpdateScores();
-      } else if (typeof data === 'string' && data.startsWith('p1+1')) {
+      } else if (typeof data === 'string' && data.startsWith('p1+1;')) {
         p1_score += 1;
+		current_server = data[data.length - 1];
         UpdateScores();
-      } else if (typeof data === 'string' && data.startsWith('p2+1')) {
+      } else if (typeof data === 'string' && data.startsWith('p2+1;')) {
         p2_score += 1;
+		current_server = data[data.length - 1];
         UpdateScores();
-      } else if (typeof data === 'string' && data.startsWith('p1-1')) {
+      } else if (typeof data === 'string' && data.startsWith('p1-1;')) {
         p1_score -= 1;
+		current_server = data[data.length - 1];
         UpdateScores();
-      } else if (typeof data === 'string' && data.startsWith('p2-1')) {
+      } else if (typeof data === 'string' && data.startsWith('p2-1;')) {
         p2_score -= 1;
+		current_server = data[data.length - 1];
         UpdateScores();
       } else if (data === 'reset') {
         p1_score = 0;
