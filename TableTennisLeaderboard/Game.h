@@ -163,7 +163,6 @@ public:
     // Notify wss
     SendWebsocketMessage_IncrementP1Score(this->player_serving);
 
-
     // Beep the buzzer--once normally, twice if the server changed
     if (server_changed)
     {
