@@ -31,9 +31,7 @@ app.get('/leaderboard', async (req, res) => {
   const players = await GetAllPlayers();
   
   players.sort((a, b) => {
-    const a_wr = a.wins / (a.wins + a.losses);
-    const b_wr = b.wins / (b.wins + b.losses);
-    return b_wr - a_wr;
+    return b.elo - a.elo;
   });
 
   res.render('leaderboard', { players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
