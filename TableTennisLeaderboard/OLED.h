@@ -20,7 +20,7 @@ void initialize_OLED()
   display.setCursor(0, 0);
   display.print("Powering");
   display.setCursor(0, 16);
-  display.print("on...s");
+  display.print("on...");
   display.display();
 }
 
