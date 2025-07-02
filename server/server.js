@@ -31,9 +31,7 @@ app.get('/leaderboard', async (req, res) => {
   const players = await GetAllPlayers();
   
   players.sort((a, b) => {
-    const a_wr = a.wins / (a.wins + a.losses);
-    const b_wr = b.wins / (b.wins + b.losses);
-    return b_wr - a_wr;
+    return b.elo - a.elo;
   });
 
   res.render('leaderboard', { players, gpn: (id) => players.find(player => player.id === id)?.name || 'Unknown' });
@@ -124,6 +122,21 @@ app.post('/api/upload-set', async (req, res) => {
     res.status(400).send('ERR');
   }
 });
+
+ /**
+ * Route for the ESP32 client to initialize the local ALL_SAVED_PLAYERS variable
+ * Gets all players from the database and returns them in an easily-parsable string format
+ */
+app.get('/api/get-players', async (req, res) => {
+  const player_names = await GetAllPlayerNames();
+
+  if (player_names == null) {
+    res.status(400).send('ERR');
+  } else {
+    res.status(200).send(player_names.join(';') + ';');
+  }
+});
+
 
 app.ws('/api/live-score', (ws, req) => LiveScoreWebSocket(ws, req));
 
