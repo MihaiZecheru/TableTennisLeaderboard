@@ -123,6 +123,21 @@ app.post('/api/upload-set', async (req, res) => {
   }
 });
 
+ /**
+ * Route for the ESP32 client to initialize the local ALL_SAVED_PLAYERS variable
+ * Gets all players from the database and returns them in an easily-parsable string format
+ */
+app.get('/api/get-players', async (req, res) => {
+  const player_names = await GetAllPlayerNames();
+
+  if (player_names == null) {
+    res.status(400).send('ERR');
+  } else {
+    res.status(200).send(player_names.join(';') + ';');
+  }
+});
+
+
 app.ws('/api/live-score', (ws, req) => LiveScoreWebSocket(ws, req));
 
 app.get('/live-score', (req, res) => {

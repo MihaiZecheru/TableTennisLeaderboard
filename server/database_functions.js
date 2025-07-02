@@ -118,6 +118,17 @@ export async function GetAllPlayers() {
   }
 }
 
+export async function GetAllPlayerNames() {
+    try {
+        const db = await db_promise;
+        const player_names = await db.all(`SELECT name FROM players ORDER BY id`);
+        return player_names.map(p => p.name);
+    } catch (err) {
+        console.error('Error fetching player names:', err.message);
+        return null;
+    }
+}
+
 export async function GetPlayerByID(player_id) {
   try {
     const db = await db_promise;
