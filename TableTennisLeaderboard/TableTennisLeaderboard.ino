@@ -12,8 +12,8 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("ESP32 powered on. Initializing...");
-  ConfigureRTC();
   initialize_OLED();
+  ConfigureRTC();
   initialize_buzzer();
   initialize_rotary_encoder();
   initialize_scoreboards();
