@@ -18,9 +18,9 @@ void initialize_OLED()
   display.setFont();
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
-  display.print("Play");
+  display.print("Powering");
   display.setCursor(0, 16);
-  display.print("Ping Pong");
+  display.print("on...s");
   display.display();
 }
 
