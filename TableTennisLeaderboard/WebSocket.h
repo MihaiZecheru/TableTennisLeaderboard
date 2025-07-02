@@ -36,7 +36,7 @@ void StartWebSocket(const char* p1_name, const char* p2_name, const uint8_t firs
   if (!websocket_initialized) {
     socket.onMessage([](WebsocketsMessage message) {
       Serial.print("WebSocket message received: ");
-      Serial.println(message.data());
+      Serial.println(message.data()); // The ESP32 shouldn't be receiving anything -- this is here just for debugging
     });
 
     socket.onEvent([](WebsocketsEvent event, String data) {
