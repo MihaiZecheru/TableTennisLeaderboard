@@ -29,34 +29,32 @@ bool SendGameData(String data)
   // unsigned long start_attempt_time = millis();
   // while (WiFi.status() != WL_CONNECTED && millis() - start_attempt_time < 10000) delay(500);
 
-  if (WiFi.status() == WL_CONNECTED)
-  {
-    // Serial.println(F("Connected to wifi."));
-
-    HTTPClient http;
-    http.begin(UPLOAD_GAME_DATA_API_ENDPOINT, PUBLIC_SSL_CERT_FOR_SERVER);
-    http.addHeader("Content-Type", "application/json");
-    int response_code = http.POST(data);
-
-    Serial.print(F("HTTP Response code: "));
-    Serial.println(response_code);
-
-    if (response_code != 200)
-    {
-      Serial.println("HTTP request FAILED!");
-      http.end();
-      // WiFi.disconnect(true);
-      return false; // fail
-    }
-
-    http.end();
-  }
-  else
+  if (WiFi.status() != WL_CONNECTED)
   {
     // Serial.println("Failed to connect to WiFi. Cannot send game data.");
     Serial.println("Not connected to WiFi. Cannot send game data.");
     ShowErrorMessage(2);
   }
+  
+  // Serial.println(F("Connected to wifi."));
+
+  HTTPClient http;
+  http.begin(UPLOAD_GAME_DATA_API_ENDPOINT, PUBLIC_SSL_CERT_FOR_SERVER);
+  http.addHeader("Content-Type", "application/json");
+  int response_code = http.POST(data);
+
+  Serial.print(F("HTTP Response code: "));
+  Serial.println(response_code);
+
+  if (response_code != 200)
+  {
+    Serial.println("HTTP request FAILED!");
+    http.end();
+    // WiFi.disconnect(true);
+    return false; // fail
+  }
+
+  http.end();
 
   // WiFi.disconnect(true); // WiFi won't be needed again for 5-30m depending on the length of the next game/set
   return true; // success
