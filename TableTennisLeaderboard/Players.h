@@ -1,26 +1,29 @@
 #ifndef PLAYERS_H
 #define PLAYERS_H
 
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include "Secrets.h"
+
+#define MAX_UINT8 255
+#define PLAYERS_DATA_SEP ';'
+
 struct Player
 {
-  const uint8_t id; // The ID from the database
-  const char name[9]; // The name from the database (VARCHAR(8)). 8 chars + null terminator
+  uint8_t id; // The ID from the database. Note: starts from 10.
+  char name[9]; // The name from the database (VARCHAR(8)). 8 chars + null terminator
 };
 
-const uint8_t SAVED_PLAYER_COUNT = 6;
+uint8_t SAVED_PLAYER_COUNT;
 
-// TODO: add more players.
 /**
- * All the players from the database.
- * Note: this is not synced up. New players have to be added manually.
+ * All the players from the database. Max
  */
-const Player ALL_SAVED_PLAYERS[SAVED_PLAYER_COUNT] = {
-  {10, "Chris"},
-  {11, "Daria"},
-  {12, "Erin"},
-  {13, "Taticu"},
-  {14, "TJ"},
-  {15, "Wyatt"}
-};
+Player _ALL_SAVED_PLAYERS[MAX_UINT8];
+
+Player& GetPlayer(uint8_t index)
+{
+  return _ALL_SAVED_PLAYERS[index];
+}
 
 #endif

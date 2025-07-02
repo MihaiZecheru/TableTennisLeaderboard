@@ -89,11 +89,11 @@ const Player* SelectPlayer(uint8_t player_num, int8_t banned_id)
   int8_t index = 0;
   int8_t prev_index = 0;
 
-  if (ALL_SAVED_PLAYERS[0].id == banned_id)
+  if (GetPlayer(0).id == banned_id)
     index = prev_index = 1;
 
   rotary_encoder_tick();
-  ShowSelectPlayerMessage(player_num, ALL_SAVED_PLAYERS[index]);
+  ShowSelectPlayerMessage(player_num, GetPlayer(index));
 
   while (true)
   {
@@ -114,7 +114,7 @@ const Player* SelectPlayer(uint8_t player_num, int8_t banned_id)
       if (index < 0) index = 0;
       if (index >= SAVED_PLAYER_COUNT) index = SAVED_PLAYER_COUNT - 1;
 
-      if (ALL_SAVED_PLAYERS[index].id == banned_id)
+      if (GetPlayer(index).id == banned_id)
       {
         index += (movement > 0) ? 1 : -1;
         if (index < 0) index = 0;
@@ -123,7 +123,7 @@ const Player* SelectPlayer(uint8_t player_num, int8_t banned_id)
 
       if (index != prev_index)
       {
-        ShowSelectPlayerMessage(player_num, ALL_SAVED_PLAYERS[index]);
+        ShowSelectPlayerMessage(player_num, GetPlayer(index));
         prev_index = index;
       }
     }
@@ -132,7 +132,7 @@ const Player* SelectPlayer(uint8_t player_num, int8_t banned_id)
     {
       delay(200);
       while (rotary_encoder_btn_pressed() || P1ButtonPressed());
-      return &ALL_SAVED_PLAYERS[index];
+      return &GetPlayer(index);
     }
 
     delay(5);

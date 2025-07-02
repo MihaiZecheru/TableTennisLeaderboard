@@ -7,13 +7,17 @@
 #include "ConfigureRTC.h"
 #include "ButtonBoard.h"
 #include "Buzzer.h"
+#include "PopulatePlayersArray.h"
 
 void setup()
 {
   Serial.begin(9600);
   Serial.println("ESP32 powered on. Initializing...");
   initialize_OLED();
+  // Functions needing the OLED, including the ShowErrorMessage() func, must be below the call to initialize_OLED()s
   ConfigureRTC();
+  // Functions needing wifi must be below the call to ConfigureRTC(), the function that configures wifi
+  PopulateSavedPlayersArray();
   initialize_buzzer();
   initialize_rotary_encoder();
   initialize_scoreboards();
