@@ -1,4 +1,4 @@
-import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst, GetPlayerElo, UpdatePlayerStats } from './database_functions.js';
+import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst, GetPlayerElo, UpdatePlayerStats, generate_elo_chart_url } from './database_functions.js';
 import { CalculateNewElo } from './calculate_new_elo.js';
 import LiveScoreWebSocket from './LiveScoreWebSocket.js';
 import express from 'express';
@@ -56,7 +56,8 @@ app.get('/player/:id', async (req, res) => {
   const player = await GetPlayerByID(player_id);
   if (!player) return res.status(500).send(`Error fetching player with ID=${player_id} - probably invalid ID`);
   const most_played_with_opponent = await GetMostPlayedWithOpponent(player_id);
-  res.render('player_details', { player, most_played_with_opponent, format_game_duration });
+  const player_elo_chart_url = await generate_elo_chart_url(player_id);
+  res.render('player_details', { player, most_played_with_opponent, format_game_duration, player_elo_chart_url });
 });
 
 /**
@@ -83,7 +84,9 @@ app.get('/compare-players', async (req, res) => {
     const p2_wins_against_p1 = await GetPlayerWinsAgainstOpponent(p2_id, p1_id);
     const p1_win_ratio_against_p2 = p1_wins_against_p2 / (p1_wins_against_p2 + p2_wins_against_p1);
     const p2_win_ratio_against_p1 = p2_wins_against_p1 / (p2_wins_against_p1 + p1_wins_against_p2);
-    res.render('compare_players', { p1, p2, p1_most_played_with_opponent, p2_most_played_with_opponent, games_played_together, format_game_duration, p1_wins_against_p2, p2_wins_against_p1, p1_win_ratio_against_p2, p2_win_ratio_against_p1 });
+    const player1_elo_chart_url = await generate_elo_chart_url(p1_id, "#3c91e6"); // Blue for the blue side
+    const player2_elo_chart_url = await generate_elo_chart_url(p2_id, "#9370db"); // Purple for the purple side
+    res.render('compare_players', { p1, p2, p1_most_played_with_opponent, p2_most_played_with_opponent, games_played_together, format_game_duration, p1_wins_against_p2, p2_wins_against_p1, p1_win_ratio_against_p2, p2_win_ratio_against_p1, player1_elo_chart_url, player2_elo_chart_url });
   }
   // If no IDs are provided, show the dropdowns
   else {

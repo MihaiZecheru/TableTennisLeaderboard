@@ -360,3 +360,69 @@ export async function UpdatePlayerStats(p1_id, p2_id, p1_new_elo, p2_new_elo, po
 
   return true;
 }
+
+export async function generate_elo_chart_url(player_id, char_line_color="#9370db") {
+  try {
+    const db = await db_promise;
+    const games = await db.all(
+      `SELECT p1_elo_before_match AS elo, id 
+       FROM Games 
+       WHERE p1_id = ? 
+       
+       UNION ALL 
+
+       SELECT p2_elo_before_match AS elo, id 
+       FROM Games 
+       WHERE p2_id = ? 
+       ORDER BY id ASC`,
+      player_id,
+      player_id
+    );
+
+    const game_count = games.length;
+    if (game_count === 0) return null;
+
+    // Get data
+    const chart_labels = games.map((_, index) => index + 1);
+    const chart_data = games.map((game) => game.elo);
+    // The last point should be the player's current ELO
+    const current_elo = await GetPlayerElo(player_id);
+    chart_data.push(current_elo);
+    chart_labels.push(game_count + 1);
+
+    // Build chart
+    const chart_config = {
+      type: "line",
+      data: {
+        labels: chart_labels,
+        datasets: [
+          {
+            label: "ELO",
+            data: chart_data,
+            fill: false,
+            borderColor: char_line_color,
+          },
+        ],
+      },
+
+      options: {
+        layout: { padding: { right: 30, top: 30 }},
+        legend: { display: false },
+        scales: {
+          xAxes: [{ scaleLabel: { display: true, labelString: "Games" }}],
+          yAxes: [{ scaleLabel: { display: true, labelString: "ELO" }}]
+        }
+      }
+
+    };
+
+    // Encode whole config once
+    const url = `https://quickchart.io/chart?bkg=white&c=${encodeURIComponent(JSON.stringify(chart_config))}`;
+
+    console.log(url);
+    return url;
+  } catch (err) {
+    console.error("Error generating elo chart url:", err.message);
+    return null;
+  }
+}

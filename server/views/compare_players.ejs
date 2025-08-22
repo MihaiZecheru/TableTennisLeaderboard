@@ -144,9 +144,9 @@
             <td><h3><%= p2_most_played_with_opponent %></h3></td>
           </tr>
           <tr>
-            <td><h3>-</h3></td>
+            <td><h3></h3></td>
             <td title="The previous stats were the player's overall stats. The below stats are accrued solely from games that <%= p1.name %> & <%= p2.name %> played together"><h3>Stats From Games Played Against Each Other Are Displayed Below</h3></td>
-            <td><h3>-</h3></td>
+            <td><h3></h3></td>
           </tr>
           <tr>
             <td><h3><%= games_played_together %></h3></td>
@@ -162,6 +162,20 @@
             <td><h3><%= p1_wins_against_p2 %></h3></td>
             <td title="<%= p1.name %> won <%= p1_wins_against_p2 %> games against <%= p2.name %>, and <%= p2.name %> won <%= p2_wins_against_p1 %> games against <%= p1.name %>"><h3>Wins Against Each Other</h3></td>
             <td><h3><%= p2_wins_against_p1 %></h3></td>
+          </tr>
+          <tr style="margin-top: -.5rem!important;">
+            <td><h3></h3></td>
+            <td><h3>Player ELO Over Time Is Displayed Below</h3></td>
+            <td><h3></h3></td>
+          </tr>
+          <tr>
+            <td>
+              <img src="<%= player1_elo_chart_url %>" alt="ELO Chart" style="width: 100%; max-width: 800px; border: 2px solid white; border-radius: 10px; background: solid white">
+            </td>
+            <td></td>
+            <td>
+              <img src="<%= player2_elo_chart_url %>" alt="ELO Chart" style="width: 100%; max-width: 800px; border: 2px solid white; border-radius: 10px; background: solid white">
+            </td>
           </tr>
         </tbody>
       </table>
