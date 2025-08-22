@@ -417,10 +417,7 @@ export async function generate_elo_chart_url(player_id, char_line_color="#9370db
     };
 
     // Encode whole config once
-    const url = `https://quickchart.io/chart?bkg=white&c=${encodeURIComponent(JSON.stringify(chart_config))}`;
-
-    console.log(url);
-    return url;
+    return `https://quickchart.io/chart?bkg=white&c=${encodeURIComponent(JSON.stringify(chart_config))}`;
   } catch (err) {
     console.error("Error generating elo chart url:", err.message);
     return null;
