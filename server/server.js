@@ -1,4 +1,4 @@
-import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst, GetPlayerElo, UpdatePlayerStats, generate_elo_chart_url } from './database_functions.js';
+import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst, GetPlayerElo, UpdatePlayerStats, generate_elo_chart_url, GetAllPlayerNames } from './database_functions.js';
 import { CalculateNewElo } from './calculate_new_elo.js';
 import LiveScoreWebSocket from './LiveScoreWebSocket.js';
 import express from 'express';
