@@ -22,13 +22,13 @@ function parse_ph(point_history) {
       throw new Error("point_history[i].s should be either 1 or 2");
     }
 
-    point_history[i] = new Point(point_history[i].s, point_history[i].w, i + 1, [p1_score, p2_score]);
+    point_history[i] = new Point(point_history[i].s, point_history[i].w, i + 1,                                                                              [p1_score, p2_score]);
   }
 
   return point_history;
 }
 
-export async function AddSetToDatabase(p1_id, p2_id, p1_elo_before_match, p2_elo_before_match, p1_elo_change, p2_elo_change, set_length, point_history, started_at, ended_at, ) {
+export async function AddSetToDatabase(p1_id, p2_id, p1_elo_before_match, p2_elo                                                                             _before_match, p1_elo_change, p2_elo_change, set_length, point_history, started_                                                                             at, ended_at, ) {
   try {
     const db = await db_promise;
 
@@ -54,7 +54,7 @@ export async function AddSetToDatabase(p1_id, p2_id, p1_elo_before_match, p2_elo
 
     // Insert into Games table
     await db.run(
-      `INSERT INTO games (p1_id, p2_id, p1_elo_before_match, p2_elo_before_match, p1_elo_change, p2_elo_change, winner_id, p1_score, p2_score, set_length, point_history, started_at, ended_at)
+      `INSERT INTO games (p1_id, p2_id, p1_elo_before_match, p2_elo_before_match                                                                             , p1_elo_change, p2_elo_change, winner_id, p1_score, p2_score, set_length, point                                                                             _history, started_at, ended_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       p1_id,
       p2_id,
@@ -84,7 +84,7 @@ export async function GetLast50Games() {
     const games = await db.all(
       `SELECT * FROM games ORDER BY id DESC LIMIT 50`
     );
-    return games.map(game => new Game(game.id, game.p1_id, game.p2_id, game.p1_elo_before_match, game.p2_elo_before_match, game.p1_elo_change, game.p2_elo_change, game.winner_id, game.p1_score, game.p2_score, game.set_length, parse_ph(JSON.parse(game.point_history)), game.started_at, game.ended_at));
+    return games.map(game => new Game(game.id, game.p1_id, game.p2_id, game.p1_e                                                                             lo_before_match, game.p2_elo_before_match, game.p1_elo_change, game.p2_elo_chang                                                                             e, game.winner_id, game.p1_score, game.p2_score, game.set_length, parse_ph(JSON.                                                                             parse(game.point_history)), game.started_at, game.ended_at));
   } catch (err) {
     console.error('Error fetching last 50 games:', err.message);
     return null;
@@ -98,7 +98,7 @@ export async function GetGameByID(id) {
       `SELECT * FROM games WHERE id = ?`,
       id
     );
-    return new Game(game.id, game.p1_id, game.p2_id, game.p1_elo_before_match, game.p2_elo_before_match, game.p1_elo_change, game.p2_elo_change, game.winner_id, game.p1_score, game.p2_score, game.set_length, parse_ph(JSON.parse(game.point_history)), game.started_at, game.ended_at);
+    return new Game(game.id, game.p1_id, game.p2_id, game.p1_elo_before_match, g                                                                             ame.p2_elo_before_match, game.p1_elo_change, game.p2_elo_change, game.winner_id,                                                                              game.p1_score, game.p2_score, game.set_length, parse_ph(JSON.parse(game.point_h                                                                             istory)), game.started_at, game.ended_at);
   } catch (err) {
     console.error('Error fetching game:', err.message);
     return null;
@@ -111,17 +111,31 @@ export async function GetAllPlayers() {
     const players = await db.all(
       `SELECT * FROM players`
     );
-    return players.map(player => new Player(player.id, player.name, player.elo, player.highest_elo, player.lowest_elo, player.total_games_played, player.total_wins, player.total_losses, player.points_won, player.points_lost, player.serves_won, player.serves_lost, player.longest_win_streak, player.longest_loss_streak, player.longest_game_duration, player.most_points_in_one_game, player.biggest_win_margin, player.biggest_loss_margin, player.most_points_won_in_a_row, player.most_points_lost_in_a_row, player.created_at));
+    return players.map(player => new Player(player.id, player.name, player.elo,                                                                              player.highest_elo, player.lowest_elo, player.total_games_played, player.total_w                                                                             ins, player.total_losses, player.points_won, player.points_lost, player.serves_w                                                                             on, player.serves_lost, player.longest_win_streak, player.longest_loss_streak, p                                                                             layer.longest_game_duration, player.most_points_in_one_game, player.biggest_win_                                                                             margin, player.biggest_loss_margin, player.most_points_won_in_a_row, player.most                                                                             _points_lost_in_a_row, player.created_at));
   } catch (err) {
     console.error('Error fetching players:', err.message);
     return [];
   }
 }
 
+export async function GetPlayerIdFromName(player_name) {
+  try {
+    const db = await db_promise;
+    const player_id = await db.get(
+      `SELECT id FROM players WHERE name = ?`,
+      player_name
+    );
+    return player_id.id;
+  } catch (err) {
+    console.error(`Error fetching player ID - there is no player with the given                                                                              name`);
+    return null;
+  }
+}
+
 export async function GetAllPlayerNames() {
     try {
         const db = await db_promise;
-        const player_names = await db.all(`SELECT name FROM players ORDER BY id`);
+        const player_names = await db.all(`SELECT name FROM players ORDER BY id`                                                                             );
         return player_names.map(p => p.name);
     } catch (err) {
         console.error('Error fetching player names:', err.message);
@@ -136,7 +150,7 @@ export async function GetPlayerByID(player_id) {
       `SELECT * FROM players WHERE id = ?`,
       player_id
     );
-    return new Player(player.id, player.name, player.elo, player.highest_elo, player.lowest_elo, player.total_games_played, player.total_wins, player.total_losses, player.points_won, player.points_lost, player.serves_won, player.serves_lost, player.longest_win_streak, player.longest_loss_streak, player.longest_game_duration, player.most_points_in_one_game, player.biggest_win_margin, player.biggest_loss_margin, player.most_points_won_in_a_row, player.most_points_lost_in_a_row, player.created_at)
+    return new Player(player.id, player.name, player.elo, player.highest_elo, pl                                                                             ayer.lowest_elo, player.total_games_played, player.total_wins, player.total_loss                                                                             es, player.points_won, player.points_lost, player.serves_won, player.serves_lost                                                                             , player.longest_win_streak, player.longest_loss_streak, player.longest_game_dur                                                                             ation, player.most_points_in_one_game, player.biggest_win_margin, player.biggest                                                                             _loss_margin, player.most_points_won_in_a_row, player.most_points_lost_in_a_row,                                                                              player.created_at)
   } catch (err) {
     console.error('Error fetching player:', err.message);
     return null;
@@ -166,9 +180,9 @@ export async function GetPlayerLeaderboard(players) {
 }
 
 /**
- * Given a player ID, return the name of the opponent with whom the given player has played the most games with.
+ * Given a player ID, return the name of the opponent with whom the given player                                                                              has played the most games with.
  * @param {*} player_id The ID of the player to get the stat for
- * @returns {string} The name of the opponent with whom the player has played the most games with
+ * @returns {string} The name of the opponent with whom the player has played th                                                                             e most games with
  */
 export async function GetMostPlayedWithOpponent(player_id) {
   try {
@@ -189,7 +203,7 @@ export async function GetMostPlayedWithOpponent(player_id) {
     );
     return opponent?.opponent_name || null;
   } catch (err) {
-    console.error('Error fetching opponent with most games played:', err.message);
+    console.error('Error fetching opponent with most games played:', err.message                                                                             );
     return null;
   }
 }
@@ -198,7 +212,7 @@ export async function GetMostPlayedWithOpponent(player_id) {
 /**
  * Get the amount of games played by two players together
  * @param {*} player_id_1 The ID of the first player
- * @param {*} player_id_2 The ID of the second player (the first player's opponent)
+ * @param {*} player_id_2 The ID of the second player (the first player's oppone                                                                             nt)
  * @returns The amount of games played by the two players together
  * @throws Error if the database query fails
  */
@@ -216,13 +230,13 @@ export async function GetCountOfGamesPlayedTogether(player_id_1, player_id_2) {
     );
     return count.games_played;
   } catch (err) {
-    console.error('Error fetching count of games played together:', err.message);
+    console.error('Error fetching count of games played together:', err.message)                                                                             ;
     return null;
   }
 }
 
 /**
- * Format the game duration from seconds to a more readable format (e.g., "5m 30s").
+ * Format the game duration from seconds to a more readable format (e.g., "5m 30                                                                             s").
  * @param duration - The duration of the game in seconds.
  */
 export function format_game_duration(duration) {
@@ -243,7 +257,7 @@ export async function GetPlayerWinsAgainstOpponent(player_id, opponent_id) {
     const count = await db.get(
       `SELECT COUNT(*) AS wins
        FROM games
-       WHERE winner_id = ? AND ((p1_id = ? AND p2_id = ?) OR (p1_id = ? AND p2_id = ?))`,
+       WHERE winner_id = ? AND ((p1_id = ? AND p2_id = ?) OR (p1_id = ? AND p2_i                                                                             d = ?))`,
       player_id,
       player_id,
       opponent_id,
@@ -258,7 +272,7 @@ export async function GetPlayerWinsAgainstOpponent(player_id, opponent_id) {
 }
 
 export function UtcToPst(date) {
-  return DateTime.fromISO(date.replace(' ', 'T') + 'Z', { zone: 'utc' }).setZone('America/Los_Angeles').toFormat('MM/dd/yyyy');
+  return DateTime.fromISO(date.replace(' ', 'T') + 'Z', { zone: 'utc' }).setZone                                                                             ('America/Los_Angeles').toFormat('MM/dd/yyyy');
 }
 
 /**
@@ -285,14 +299,14 @@ import * as stats from './stats_functions.js';
  * The stats from the game are used to update the Player table in the database.
  * @param {*} p1_id The ID of player 1 in the game
  * @param {*} p2_id The ID of player 2 in the game
- * @param {*} p1_new_elo The new Elo rating of player 1 after the game has been played and the Elo calculation has been done
- * @param {*} p2_new_elo The new Elo rating of player 2 after the game has been played and the Elo calculation has been done
- * @param {*} point_history The point history of the game. This is used to update the stats of the players in the database.
+ * @param {*} p1_new_elo The new Elo rating of player 1 after the game has been                                                                              played and the Elo calculation has been done
+ * @param {*} p2_new_elo The new Elo rating of player 2 after the game has been                                                                              played and the Elo calculation has been done
+ * @param {*} point_history The point history of the game. This is used to updat                                                                             e the stats of the players in the database.
  * @param {*} started_at The time the game started
  * @param {*} ended_at The time the game ended
  * @returns Success indicator. True for success, false for failure.
  */
-export async function UpdatePlayerStats(p1_id, p2_id, p1_new_elo, p2_new_elo, point_history, started_at, ended_at) {
+export async function UpdatePlayerStats(p1_id, p2_id, p1_new_elo, p2_new_elo, po                                                                             int_history, started_at, ended_at) {
   try {
     // Calculate points
     let p1_points = 0;
@@ -306,17 +320,17 @@ export async function UpdatePlayerStats(p1_id, p2_id, p1_new_elo, p2_new_elo, po
     await stats.update_player_elo(p1_id, p1_new_elo);
     await stats.update_player_elo(p2_id, p2_new_elo);
 
-    // Player.total_wins, Player.total_losses, Player.biggest_win_margin, Player.biggest_loss_margin
+    // Player.total_wins, Player.total_losses, Player.biggest_win_margin, Player                                                                             .biggest_loss_margin
     if (p1_points > p2_points) {
       await stats.add_win_to_player(p1_id);
       await stats.add_loss_to_player(p2_id);
-      await stats.update_biggest_win_margin_if_necessary(p1_id, p1_points - p2_points);
-      await stats.update_biggest_loss_margin_if_necessary(p2_id, Math.abs(p2_points - p1_points));
+      await stats.update_biggest_win_margin_if_necessary(p1_id, p1_points - p2_p                                                                             oints);
+      await stats.update_biggest_loss_margin_if_necessary(p2_id, Math.abs(p2_poi                                                                             nts - p1_points));
     } else if (p2_points > p1_points) {
       await stats.add_win_to_player(p2_id);
       await stats.add_loss_to_player(p1_id);
-      await stats.update_biggest_win_margin_if_necessary(p2_id, p2_points - p1_points);
-      await stats.update_biggest_loss_margin_if_necessary(p1_id, Math.abs(p1_points - p2_points));
+      await stats.update_biggest_win_margin_if_necessary(p2_id, p2_points - p1_p                                                                             oints);
+      await stats.update_biggest_loss_margin_if_necessary(p1_id, Math.abs(p1_poi                                                                             nts - p2_points));
     }
 
     // Player.total_games_played
@@ -337,18 +351,18 @@ export async function UpdatePlayerStats(p1_id, p2_id, p1_new_elo, p2_new_elo, po
     await stats.update_longest_loss_streak_if_necessary(p2_id);
 
     // Player.longest_game_duration
-    await stats.update_longest_game_duration_if_necessary(p1_id, started_at, ended_at);
-    await stats.update_longest_game_duration_if_necessary(p2_id, started_at, ended_at);
+    await stats.update_longest_game_duration_if_necessary(p1_id, started_at, end                                                                             ed_at);
+    await stats.update_longest_game_duration_if_necessary(p2_id, started_at, end                                                                             ed_at);
 
     // Player.most_points_in_one_game
     await stats.update_most_points_in_one_game_if_necessary(p1_id, p1_points);
     await stats.update_most_points_in_one_game_if_necessary(p2_id, p2_points);
 
     // Player.most_points_won_in_a_row, Player.most_points_lost_in_a_row
-    await stats.update_most_points_won_in_a_row_if_necessary(p1_id, 1, point_history);
-    await stats.update_most_points_won_in_a_row_if_necessary(p2_id, 2, point_history);
-    await stats.update_most_points_lost_in_a_row_if_necessary(p1_id, 1, point_history);
-    await stats.update_most_points_lost_in_a_row_if_necessary(p2_id, 2, point_history);
+    await stats.update_most_points_won_in_a_row_if_necessary(p1_id, 1, point_his                                                                             tory);
+    await stats.update_most_points_won_in_a_row_if_necessary(p2_id, 2, point_his                                                                             tory);
+    await stats.update_most_points_lost_in_a_row_if_necessary(p1_id, 1, point_hi                                                                             story);
+    await stats.update_most_points_lost_in_a_row_if_necessary(p2_id, 2, point_hi                                                                             story);
 
     // Player.time_played
     await stats.add_playing_time(p1_id, started_at, ended_at);
@@ -361,19 +375,19 @@ export async function UpdatePlayerStats(p1_id, p2_id, p1_new_elo, p2_new_elo, po
   return true;
 }
 
-export async function generate_elo_chart_url(player_id, char_line_color="#9370db") {
+export async function generate_elo_chart_url(player_id, char_line_color="#9370db                                                                             ") {
   try {
     const db = await db_promise;
     const games = await db.all(
-      `SELECT p1_elo_before_match AS elo, id 
-       FROM Games 
-       WHERE p1_id = ? 
-       
-       UNION ALL 
+      `SELECT p1_elo_before_match AS elo, id
+       FROM Games
+       WHERE p1_id = ?
 
-       SELECT p2_elo_before_match AS elo, id 
-       FROM Games 
-       WHERE p2_id = ? 
+       UNION ALL
+
+       SELECT p2_elo_before_match AS elo, id
+       FROM Games
+       WHERE p2_id = ?
        ORDER BY id ASC`,
       player_id,
       player_id
@@ -417,7 +431,7 @@ export async function generate_elo_chart_url(player_id, char_line_color="#9370db
     };
 
     // Encode whole config once
-    return `https://quickchart.io/chart?bkg=white&c=${encodeURIComponent(JSON.stringify(chart_config))}`;
+    return `https://quickchart.io/chart?bkg=white&c=${encodeURIComponent(JSON.st                                                                             ringify(chart_config))}`;
   } catch (err) {
     console.error("Error generating elo chart url:", err.message);
     return null;
