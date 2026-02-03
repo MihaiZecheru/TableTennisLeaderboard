@@ -1,4 +1,4 @@
-import { AddSetToDatabase, GetLast50Games, GetGameByID, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst, GetPlayerElo, UpdatePlayerStats, generate_elo_chart_url, GetAllPlayerNames } from './database_functions.js';
+import { AddSetToDatabase, GetLast50Games, GetGameByID, GetPlayerIdFromName, GetAllPlayers, GetPlayerByID, GetMostPlayedWithOpponent, GetCountOfGamesPlayedTogether, format_game_duration, GetPlayerWinsAgainstOpponent, UtcToPst, GetPlayerElo, UpdatePlayerStats, generate_elo_chart_url, GetAllPlayerNames } from './database_functions.js';
 import { CalculateNewElo } from './calculate_new_elo.js';
 import LiveScoreWebSocket from './LiveScoreWebSocket.js';
 import express from 'express';
@@ -29,7 +29,7 @@ app.get('/', async (req, res) => {
  */
 app.get('/leaderboard', async (req, res) => {
   const players = await GetAllPlayers();
-  
+
   players.sort((a, b) => {
     return b.elo - a.elo;
   });
@@ -58,6 +58,16 @@ app.get('/player/:id', async (req, res) => {
   const most_played_with_opponent = await GetMostPlayedWithOpponent(player_id);
   const player_elo_chart_url = await generate_elo_chart_url(player_id);
   res.render('player_details', { player, most_played_with_opponent, format_game_duration, player_elo_chart_url });
+});
+
+/**
+ * Get a player's ID from the database given his name.
+ */
+app.get('/api/player-id/:name', async (req, res) => {
+  const player_name = req.params.name;
+  const player_id = await GetPlayerIdFromName(player_name);
+  if (!player_id) return res.status(500).send(`Error fetching player with name=${player_name} - player does not exist`);
+  res.status(200).send(player_id);
 });
 
 /**
@@ -105,7 +115,7 @@ app.post('/api/upload-set', async (req, res) => {
    * point_history: [{ 's': 1, 'w': 0 }, { 's': 1, 'w': 1 }] }
    */
   const { p1_id, p2_id, set_length, point_history, started_at, ended_at } = req.body;
-  
+
   if (!p1_id || !p2_id || !set_length || !point_history || !started_at || !ended_at) {
     return res.status(400).send('Missing required fields');
   }
@@ -118,7 +128,7 @@ app.post('/api/upload-set', async (req, res) => {
 
   const success = await AddSetToDatabase(p1_id, p2_id, p1_elo_before_match, p2_elo_before_match, p1_elo_change, p2_elo_change, set_length, point_history, started_at, ended_at);
   const stats_success = await UpdatePlayerStats(p1_id, p2_id, p1_new_elo, p2_new_elo, point_history, started_at, ended_at);
-  
+
   if (success && stats_success) {
     res.status(200).send('OK');
   } else {
@@ -140,14 +150,27 @@ app.get('/api/get-players', async (req, res) => {
   }
 });
 
-
+/**
+ * Handle the updates to the live-score display
+ */
 app.ws('/api/live-score', (ws, req) => LiveScoreWebSocket(ws, req));
 
+/**
+ * Shows the live-score of the game being played on the ESP32
+ */
 app.get('/live-score', (req, res) => {
   // The page will connect to the live-score WebSocket through the browser
   // and modify the page via the <script> tag once connected.
   // The page will update dynamically; the <script> tag will handle the WebSocket connection.
   res.render('live_score');
+});
+
+/**
+ * Play a game remotely from anywhere by starting the game on this page and
+ * updating the score from your phone instead of the ESP32 which is only at my house
+ */
+app.get('/remote-game', (req, res) => {
+  res.render('remote_game');
 });
 
 app.listen(PORT, () => {
